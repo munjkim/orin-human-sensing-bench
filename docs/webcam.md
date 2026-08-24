@@ -67,34 +67,53 @@ ohsb live -c configs/webcam_face.yaml           # 478-point mesh
 ohsb live -c configs/webcam_pose.yaml           # pose landmarks
 ```
 
-Output:
+Output — recorded on the target board (C920, 720p, DVFS still live):
 
 ```
 camera=0 MJPG 1280x720@30
-[webcam-pose-lite-720p] 300 iters (+30 warmup)
-  latency ms   mean=33.42  p50=33.10  p90=35.02  p95=36.88  p99=41.20  max=48.9
-  throughput   29.8 fps
-    stage capture    mean=21.88 ms  (65% of frame)
-    stage convert    mean=1.94 ms   (6% of frame)
-    stage infer      mean=9.60 ms   (29% of frame)
-  camera max   30.1 fps (capture only, no inference)
-  pipeline cap 86.5 fps (convert+infer, camera removed)
+[face-detect-720p-dvfs] 300 iters (+30 warmup)
+  latency ms   mean=32.11  p50=32.11  p95=36.51
+  throughput   29.7 fps
+    stage capture    mean=26.12 ms  (78% of frame)
+    stage convert    mean=0.45 ms   (1% of frame)
+    stage infer      mean=7.06 ms   (21% of frame)
+  camera max   30.0 fps (capture only, no inference)
+  pipeline cap 133.2 fps (convert+infer, camera removed)
   realtime     99% of camera rate
-  >> CAMERA-BOUND — compute could sustain 87 fps but the camera only
+  >> CAMERA-BOUND — compute could sustain 133 fps but the camera only
      delivers 30 fps. A faster model will not help; a better camera mode
      or sensor will.
 ```
 
-Read `capture` at 65% of the frame together with the verdict: the loop is
+Read `capture` at 78% of the frame together with the verdict: the loop is
 sitting and waiting for the camera. That is the signature of a
 camera-bound pipeline, and it means a heavier model is free until
-`pipeline cap` drops near 30.
+`pipeline cap` drops near 30 — this camera reaches 30 fps at 1920x1080 too
+(see `ohsb cameras`), so the default configs now capture at 1080p rather
+than 720p.
+
+Pose landmarking on the same board is the other case — compute-bound:
+
+```
+[pose-lite-720p-dvfs] 300 iters (+30 warmup)
+    stage capture    mean=8.41 ms   (19% of frame)
+    stage convert    mean=0.45 ms   (1% of frame)
+    stage infer      mean=36.60 ms  (81% of frame)
+  camera max   30.0 fps
+  pipeline cap 27.0 fps
+  >> COMPUTE-BOUND — the camera offers 30 fps but the pipeline sustains
+     only 27 fps ('infer' is the largest stage). A lighter model, a
+     smaller input, or the GPU delegate is where the gain is.
+```
+
+Same camera, same board, opposite bottleneck — which is why every config
+measures its own baseline rather than assuming one answer for every task.
 
 ## 3. Sweep it
 
 ```bash
-./scripts/camera_matrix.sh                        # 640x480 + 720p, cpu + gpu
-./scripts/camera_matrix.sh "640x480 1280x720" "cpu"
+./scripts/camera_matrix.sh                        # 640x480 + 720p + 1080p, cpu + gpu
+./scripts/camera_matrix.sh "1280x720 1920x1080" "cpu"
 ohsb report results/camera-matrix-*/
 ```
 
@@ -103,8 +122,8 @@ camera-bound rows are visible at a glance:
 
 ```
 run                            del        res     p50     p95     fps     cam      W     mJ/f  bottleneck
-webcam-face-detect-cpu-640x480 cpu    640x480   33.20   34.90    30.1    30.2   4.90    162.7  CAMERA-BOUND
-webcam-face-cpu-1280x720       cpu   1280x720   61.40   68.20    16.3    30.1   6.20    380.4  COMPUTE-BOUND
+webcam-face-detect-cpu-1280x720 cpu   1280x720   32.11   36.51    29.7    30.0   5.14    172.8  CAMERA-BOUND
+webcam-pose-cpu-1280x720        cpu   1280x720   44.11   48.67    22.0    30.0   5.34    243.1  COMPUTE-BOUND
 ```
 
 ## Things that will bite you

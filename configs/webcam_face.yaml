@@ -9,7 +9,7 @@
 #   ohsb live -c configs/webcam_face.yaml --set task.delegate=gpu
 #   ohsb live -c configs/webcam_face.yaml --set camera.fourcc=YUYV   # see the USB wall
 run:
-  name: webcam-face-mesh-720p
+  name: webcam-face-mesh-1080p
   iterations: 300      # frames to measure; at 30 fps this is ~10 s
   warmup: 30
   repeat: 1
@@ -28,10 +28,10 @@ task:
 
 camera:
   device: 0
-  width: 1280
-  height: 720
+  width: 1920
+  height: 1080
   fps: 30
-  # MJPG first: a USB 2.0 webcam cannot carry raw YUYV at 720p30, and an
+  # MJPG first: a USB 2.0 webcam cannot carry raw YUYV at 1080p30, and an
   # uncompressed mode will cap the whole pipeline before the model is even
   # involved. Check `ohsb cameras` for what this device really offers.
   fourcc: MJPG

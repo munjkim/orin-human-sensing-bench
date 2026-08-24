@@ -7,7 +7,7 @@
 # substituting something else.
 #
 #   ./scripts/camera_matrix.sh                      # defaults below
-#   ./scripts/camera_matrix.sh "640x480 1280x720" "cpu gpu"
+#   ./scripts/camera_matrix.sh "1280x720 1920x1080" "cpu gpu"
 set -euo pipefail
 
 # Defaults chosen from a real C920: MJPG reaches 30 fps at every one of
