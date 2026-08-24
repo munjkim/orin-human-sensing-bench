@@ -1,0 +1,190 @@
+"""Regression tests against payloads recorded on the real target board.
+
+Source: env/siblab-desktop-20260824-132626 (Orin Nano dev kit, JetPack 5.1.1,
+jetson-stats 7.x, Logitech C920). Every case here corresponds to a bug that
+synthetic fixtures did not catch, so these are locked to the real shapes
+rather than to what the API documentation implies.
+"""
+
+from collections.abc import Mapping
+
+import pytest
+
+from ohsb.camera_probe import collapse_modes, parse_formats, realtime_ceiling
+from ohsb.monitors.jtop_monitor import (
+    as_mapping,
+    extract_cpu_pct,
+    extract_gpu,
+    extract_power_mw,
+    extract_ram_mb,
+    extract_temps,
+    total_rail,
+)
+
+
+class JtopMapping(Mapping):
+    """A Mapping that is not a dict subclass.
+
+    jetson-stats returns these for `gpu` and `memory`; its repr looks exactly
+    like a dict's, which is what made the bug invisible until a raw dump from
+    the board was compared field by field.
+    """
+
+    def __init__(self, data):
+        self._data = data
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def __len__(self):
+        return len(self._data)
+
+    def __repr__(self):
+        return repr(self._data)
+
+
+# Verbatim from the board's `ohsb doctor --dump-jtop`.
+POWER = {
+    "rail": {
+        "VDD_CPU_GPU_CV": {"volt": 5056, "curr": 112, "power": 566, "online": True, "avg": 566},
+        "VDD_SOC": {"volt": 5064, "curr": 272, "power": 1377, "online": True, "avg": 1377},
+    },
+    "tot": {"volt": 5064, "curr": 824, "power": 4172, "online": True, "avg": 4172,
+            "name": "VDD_IN"},
+}
+
+GPU = JtopMapping({
+    "ga10b": {
+        "type": "integrated",
+        "status": {"railgate": False, "tpc_pg_mask": False, "3d_scaling": True, "load": 0.0},
+        "freq": {"governor": "nvhost_podgov", "cur": 306000, "max": 624750,
+                 "min": 306000, "GPC": [305965]},
+        "power_control": "auto",
+    }
+})
+
+MEMORY = JtopMapping({
+    "RAM": {"tot": 6636128, "used": 3038940, "free": 564388, "buffers": 70496,
+            "cached": 3084052, "shared": 401048, "lfb": 4},
+})
+
+CPU = {"total": {"user": 3.1691864202907567, "nice": 0.2867645533918165,
+                 "system": 2.915603807627699, "idle": 92.40688317882993}}
+
+TEMPERATURE = {
+    "CPU": {"temp": 48.343, "online": True},
+    "CV0": {"temp": -256.0, "online": False},
+    "GPU": {"temp": 47.937, "online": True},
+    "tj": {"temp": 48.343, "online": True},
+}
+
+
+# -- the mapping bug -------------------------------------------------------
+
+def test_gpu_payload_is_not_a_dict():
+    # Guards the premise of the bug: an isinstance(x, dict) check fails here.
+    assert not isinstance(GPU, dict)
+    assert isinstance(GPU, Mapping)
+
+
+def test_as_mapping_sees_through_non_dict_mappings():
+    assert as_mapping(GPU)["ga10b"]["status"]["load"] == 0.0
+    assert as_mapping({"a": 1}) == {"a": 1}
+    assert as_mapping(None) == {}
+    assert as_mapping("not a mapping") == {}
+
+
+def test_gpu_metrics_survive_the_custom_mapping():
+    out = extract_gpu(GPU)
+    assert out["load_pct"] == 0.0
+    assert out["freq_khz"] == 306000
+    # 3d_scaling True == DVFS still active; jetson_clocks has not pinned it.
+    assert out["scaling_3d"] == 1.0
+
+
+def test_ram_survives_the_custom_mapping():
+    # 3038940 kB used -> ~2968 MB
+    assert extract_ram_mb(MEMORY) == pytest.approx(2967.7, abs=0.5)
+
+
+# -- the total-rail naming bug --------------------------------------------
+
+def test_total_rail_keeps_its_real_name():
+    out = extract_power_mw(POWER)
+    # VDD_IN is only under `tot`, never in `rail` — but the result must still
+    # call it VDD_IN so it lines up with a tegrastats run of the same board.
+    assert out["VDD_IN"] == 4172
+    assert out["VDD_CPU_GPU_CV"] == 566
+    assert out["VDD_SOC"] == 1377
+    assert "TOTAL" not in out
+    assert "tot" not in out
+    assert total_rail(out) == "VDD_IN"
+
+
+def test_unnamed_total_still_falls_back():
+    out = extract_power_mw({"rail": {"VDD_SOC": {"power": 100}}, "tot": {"power": 900}})
+    assert out["TOTAL"] == 900
+    assert total_rail(out) == "TOTAL"
+
+
+# -- the rest of the payload ----------------------------------------------
+
+def test_cpu_percent_from_idle():
+    assert extract_cpu_pct(CPU) == pytest.approx(7.593, abs=0.01)
+
+
+def test_offline_sensors_are_dropped():
+    out = extract_temps(TEMPERATURE)
+    assert out == {"CPU": 48.343, "GPU": 47.937, "tj": 48.343}
+
+
+# -- the C920's mode explosion --------------------------------------------
+
+C920 = """ioctl: VIDIOC_ENUM_FMT
+\tType: Video Capture
+
+\t[0]: 'YUYV' (YUYV 4:2:2)
+\t\tSize: Discrete 640x480
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t\t\tInterval: Discrete 0.100s (10.000 fps)
+\t\tSize: Discrete 1280x720
+\t\t\tInterval: Discrete 0.100s (10.000 fps)
+\t\t\tInterval: Discrete 0.200s (5.000 fps)
+\t\tSize: Discrete 1920x1080
+\t\t\tInterval: Discrete 0.200s (5.000 fps)
+\t[1]: 'MJPG' (Motion-JPEG, compressed)
+\t\tSize: Discrete 640x480
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t\t\tInterval: Discrete 0.200s (5.000 fps)
+\t\tSize: Discrete 1280x720
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t\t\tInterval: Discrete 0.100s (10.000 fps)
+\t\tSize: Discrete 1920x1080
+\t\t\tInterval: Discrete 0.033s (30.000 fps)
+\t\t\tInterval: Discrete 0.200s (5.000 fps)
+"""
+
+
+def test_collapse_keeps_only_the_fps_ceiling():
+    modes = parse_formats(C920)
+    collapsed = collapse_modes(modes)
+    assert len(modes) == 11
+    assert len(collapsed) == 6  # 2 formats x 3 resolutions
+    mjpg_1080 = [m for m in collapsed if m["fourcc"] == "MJPG" and m["width"] == 1920]
+    assert mjpg_1080[0]["fps"] == 30.0
+
+
+def test_realtime_ceiling_separates_compressed_from_raw():
+    ceiling = realtime_ceiling(parse_formats(C920), fps=30.0)
+    # The USB bandwidth wall, stated as one fact per format.
+    assert (ceiling["MJPG"]["width"], ceiling["MJPG"]["height"]) == (1920, 1080)
+    assert (ceiling["YUYV"]["width"], ceiling["YUYV"]["height"]) == (640, 480)
+
+
+def test_collapse_is_sorted_largest_first_within_a_format():
+    collapsed = collapse_modes(parse_formats(C920))
+    mjpg = [(m["width"], m["height"]) for m in collapsed if m["fourcc"] == "MJPG"]
+    assert mjpg == [(1920, 1080), (1280, 720), (640, 480)]
