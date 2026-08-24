@@ -1,0 +1,30 @@
+# MediaPipe Face Detector (BlazeFace short range).
+run:
+  name: face-detect-cpu-720p
+  iterations: 500
+  warmup: 50
+  repeat: 1
+
+task:
+  type: face_detector
+  model: models/blaze_face_short_range.tflite
+  delegate: cpu
+  running_mode: image
+  options:
+    min_detection_confidence: 0.5
+    min_suppression_threshold: 0.3
+
+source:
+  type: synthetic
+  width: 1280
+  height: 720
+  count: 30
+
+monitor:
+  power:
+    backend: auto
+    interval_ms: 100
+
+output:
+  dir: results
+  save_raw_latencies: true

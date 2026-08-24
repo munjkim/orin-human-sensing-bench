@@ -1,0 +1,28 @@
+# Harness calibration — no model, no MediaPipe.
+# Read every real result against this floor: it is what the measurement loop
+# itself costs on this machine.
+run:
+  name: noop
+  iterations: 500
+  warmup: 50
+  repeat: 1
+
+task:
+  type: noop
+  options:
+    sleep_ms: 0
+
+source:
+  type: synthetic
+  width: 1280
+  height: 720
+  count: 30
+
+monitor:
+  power:
+    backend: auto
+    interval_ms: 100
+
+output:
+  dir: results
+  save_raw_latencies: true

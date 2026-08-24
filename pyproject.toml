@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ohsb"
+version = "0.1.0"
+description = "Human sensing inference benchmark for NVIDIA Jetson Orin (MediaPipe Tasks)"
+readme = "README.md"
+requires-python = ">=3.8"   # JetPack 5.1.1 ships Python 3.8.10
+license = { file = "LICENSE" }
+dependencies = [
+    "numpy>=1.21",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Kept out of the base deps on purpose: on Jetson (aarch64) mediapipe often has to
+# come from a JetPack-matched wheel rather than plain PyPI. See docs/orin-setup.md.
+mediapipe = ["mediapipe>=0.10.9"]
+# On the Orin, OpenCV comes from JetPack (4.5.4, system python3-opencv) — do NOT
+# pip install it there. This extra is for dev machines only.
+video = ["opencv-python>=4.8"]
+# jetson-stats provides jtop, the preferred (sudo-free) power backend on-board.
+jetson = ["jetson-stats>=4.2"]
+dev = ["pytest>=7", "ruff>=0.4"]
+
+[project.scripts]
+ohsb = "ohsb.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ohsb"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+# The board runs Python 3.8.10 (JetPack 5.1.1). `from __future__ import
+# annotations` makes ruff think PEP 585/604 syntax is safe, but keeping the
+# explicit typing imports means nothing breaks if an annotation is ever
+# evaluated at runtime on 3.8.
+ignore = ["UP006", "UP007", "UP035", "UP045"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,50 @@
+# Live USB webcam -> face landmarker (478-point mesh), end-to-end.
+#
+# Answers "how many fps does this camera + this model actually give me",
+# and — via the capture-only baseline — whether the limit is the camera or
+# the Orin.
+#
+#   ohsb cameras                                   # what the camera supports
+#   ohsb live -c configs/webcam_face.yaml
+#   ohsb live -c configs/webcam_face.yaml --set task.delegate=gpu
+#   ohsb live -c configs/webcam_face.yaml --set camera.fourcc=YUYV   # see the USB wall
+run:
+  name: webcam-face-mesh-720p
+  iterations: 300      # frames to measure; at 30 fps this is ~10 s
+  warmup: 30
+  repeat: 1
+
+task:
+  type: face_landmarker
+  model: models/face_landmarker.task
+  delegate: cpu
+  # video mode reuses tracking between frames, which is what a real camera
+  # app does and is usually faster than re-detecting every frame.
+  running_mode: video
+  options:
+    num_faces: 1
+    min_face_detection_confidence: 0.5
+    min_tracking_confidence: 0.5
+
+camera:
+  device: 0
+  width: 1280
+  height: 720
+  fps: 30
+  # MJPG first: a USB 2.0 webcam cannot carry raw YUYV at 720p30, and an
+  # uncompressed mode will cap the whole pipeline before the model is even
+  # involved. Check `ohsb cameras` for what this device really offers.
+  fourcc: MJPG
+  buffersize: 1
+  drain: false          # true = always process the newest frame (latency view)
+  settle_frames: 30     # let auto-exposure settle before measuring
+  baseline_frames: 60   # capture-only pass, for the bottleneck verdict
+
+monitor:
+  power:
+    backend: auto
+    interval_ms: 100
+
+output:
+  dir: results
+  save_raw_latencies: true

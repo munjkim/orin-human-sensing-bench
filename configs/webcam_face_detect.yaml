@@ -1,0 +1,35 @@
+# Live USB webcam -> face detector (BlazeFace).
+# The cheapest of the face tasks: if this one is still camera-bound, the
+# camera is the ceiling for every face workload on this board.
+run:
+  name: webcam-face-detect-720p
+  iterations: 300
+  warmup: 30
+  repeat: 1
+
+task:
+  type: face_detector
+  model: models/blaze_face_short_range.tflite
+  delegate: cpu
+  running_mode: video
+  options:
+    min_detection_confidence: 0.5
+
+camera:
+  device: 0
+  width: 1280
+  height: 720
+  fps: 30
+  fourcc: MJPG
+  buffersize: 1
+  settle_frames: 30
+  baseline_frames: 60
+
+monitor:
+  power:
+    backend: auto
+    interval_ms: 100
+
+output:
+  dir: results
+  save_raw_latencies: true

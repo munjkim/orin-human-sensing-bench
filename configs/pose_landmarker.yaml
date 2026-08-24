@@ -1,0 +1,43 @@
+# MediaPipe Pose Landmarker on Jetson Orin Nano.
+#
+# Sweep the axes that actually move the number:
+#   ohsb run -c configs/pose_landmarker.yaml --set task.delegate=gpu
+#   ohsb run -c configs/pose_landmarker.yaml \
+#            --set task.model=models/pose_landmarker_full.task
+#   ohsb run -c configs/pose_landmarker.yaml --set source.width=640 --set source.height=480
+run:
+  name: pose-lite-cpu-720p
+  iterations: 300
+  warmup: 30
+  repeat: 1
+  tags:
+    variant: lite
+
+task:
+  type: pose_landmarker
+  model: models/pose_landmarker_lite.task
+  delegate: cpu          # cpu | gpu
+  running_mode: image    # image = per-frame cost; video = with tracking between frames
+  options:
+    num_poses: 1
+    min_pose_detection_confidence: 0.5
+    min_tracking_confidence: 0.5
+    output_segmentation_masks: false
+
+source:
+  # Swap to a real clip for representative numbers — synthetic frames contain
+  # no people, so the landmarker takes its "no detection" path and underreports.
+  type: synthetic
+  width: 1280
+  height: 720
+  count: 30
+
+monitor:
+  power:
+    backend: auto
+    interval_ms: 100
+
+output:
+  dir: results
+  save_raw_latencies: true
+  save_power_samples: false
