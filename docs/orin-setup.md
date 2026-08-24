@@ -138,6 +138,28 @@ It sets `nvpmodel -m 0` (15 W), runs `jetson_clocks` to pin CPU/GPU/EMC at
 max, and forces the fan to full — `jetson_clocks` disables the thermal fan
 curve, so without the last step a long sweep can throttle silently.
 
+**How `ohsb` verifies the pin actually happened, and why it does not trust
+the obvious sources.** On this Orin Nano (L4T 35.3.1), confirmed with a
+before/after `ohsb doctor --dump-jtop`:
+
+| signal | before `jetson_clocks` | after | usable? |
+|---|---|---|---|
+| `/sys/class/devfreq/17000000.ga10b/{min,max}_freq` | 624750000 / 624750000 | 624750000 / 624750000 | **no — identical either way** |
+| GPU devfreq governor | `nvhost_podgov` | `nvhost_podgov` | **no — never renames to `userspace`** |
+| CPU `scaling_governor` | `schedutil` | `schedutil` | **no — stays `schedutil`, even pinned** |
+| CPU `scaling_min_freq` vs `scaling_max_freq` | differ | equal, at `cpuinfo_max_freq` | yes |
+| jtop `gpu.freq.min` vs `gpu.freq.max` | 306000 vs 624750 | 624750 vs 624750 | yes |
+
+Two traps in that table cost real debugging time: the generic devfreq sysfs
+pair reads as "already pinned" *before* `jetson_clocks` ever runs, and
+neither the GPU nor CPU governor name changes on pin — `jetson_clocks`
+collapses the min/max range instead of switching governors on this L4T
+version. `ohsb` now checks CPU pin state via `scaling_min_freq ==
+scaling_max_freq` per core, and GPU pin state via a quick `jtop` read of
+`gpu.freq.min == gpu.freq.max` (jetson-stats reads nvhost_podgov's own
+min/max attributes, which do collapse correctly). If jtop is unavailable,
+GPU pin state is reported as unknown rather than guessed.
+
 Optionally free the ~3 GB the desktop session holds:
 
 ```bash

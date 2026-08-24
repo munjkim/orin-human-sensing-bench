@@ -188,3 +188,56 @@ def test_collapse_is_sorted_largest_first_within_a_format():
     collapsed = collapse_modes(parse_formats(C920))
     mjpg = [(m["width"], m["height"]) for m in collapsed if m["fourcc"] == "MJPG"]
     assert mjpg == [(1920, 1080), (1280, 720), (640, 480)]
+
+
+# -- jetson_clocks pin detection: the third wrong inference ---------------
+#
+# Verified with `ohsb doctor --dump-jtop` before and after `sudo jetson_clocks`
+# on the target board. /sys/class/devfreq/.../min_freq,max_freq read
+# 624750000/624750000 in BOTH captures — unusable. The GPU devfreq governor
+# stayed 'nvhost_podgov' in both — also unusable. jtop's own freq.min/max is
+# the only field that actually changed.
+
+GPU_BEFORE_PIN = {
+    "ga10b": {
+        "type": "integrated",
+        "status": {"railgate": False, "tpc_pg_mask": False, "3d_scaling": True, "load": 0.0},
+        "freq": {"governor": "nvhost_podgov", "cur": 306000, "max": 624750,
+                 "min": 306000, "GPC": [305965]},
+        "power_control": "auto",
+    }
+}
+
+GPU_AFTER_PIN = {
+    "ga10b": {
+        "type": "integrated",
+        "status": {"railgate": False, "tpc_pg_mask": False, "3d_scaling": True, "load": 0.0},
+        "freq": {"governor": "nvhost_podgov", "cur": 624750, "max": 624750,
+                 "min": 624750, "GPC": [624691]},
+        "power_control": "auto",
+    }
+}
+
+
+def test_gpu_freq_range_before_pin_shows_scaling():
+    out = extract_gpu(GPU_BEFORE_PIN)
+    assert out["freq_min_khz"] == 306000
+    assert out["freq_max_khz"] == 624750
+    assert out["freq_min_khz"] != out["freq_max_khz"]
+
+
+def test_gpu_freq_range_after_pin_has_collapsed():
+    out = extract_gpu(GPU_AFTER_PIN)
+    assert out["freq_min_khz"] == out["freq_max_khz"] == 624750
+
+
+def test_3d_scaling_flag_does_not_track_pin_state():
+    # Both captures report 3d_scaling: True — it must not be used as the signal.
+    assert extract_gpu(GPU_BEFORE_PIN)["scaling_3d"] == 1.0
+    assert extract_gpu(GPU_AFTER_PIN)["scaling_3d"] == 1.0
+
+
+def test_governor_name_does_not_track_pin_state():
+    # Neither capture shows a governor rename to 'userspace'.
+    for payload in (GPU_BEFORE_PIN, GPU_AFTER_PIN):
+        assert payload["ga10b"]["freq"]["governor"] == "nvhost_podgov"
