@@ -348,15 +348,24 @@ def _render_markdown(rows) -> str:
 
 
 def _freq(gpu) -> str:
+    """Report the devfreq numbers without judging whether they mean "pinned".
+
+    They do not. On an Orin Nano these read min == max == 624750000 while
+    DVFS is fully live and the GPU idles at 306 MHz, so calling that "pinned"
+    put a claim in the summary that directly contradicted the
+    jetson_clocks row above it. The governor is printed instead, and the
+    pinned/not judgement is left to the row that tracks it.
+    """
     lo, hi = gpu.get("min_freq_hz"), gpu.get("max_freq_hz")
-    cur = gpu.get("cur_freq_hz")
     if lo is None or hi is None:
-        return "-"
+        return gpu.get("governor") or "-"
     scale = 1e6
-    if lo == hi:
-        return f"pinned at {hi / scale:.0f} MHz"
-    return f"{lo / scale:.0f}-{hi / scale:.0f} MHz (cur {cur / scale:.0f})" if cur else \
-           f"{lo / scale:.0f}-{hi / scale:.0f} MHz"
+    span = f"{hi / scale:.0f} MHz" if lo == hi else f"{lo / scale:.0f}-{hi / scale:.0f} MHz"
+    cur = gpu.get("cur_freq_hz")
+    if cur:
+        span += f", cur {cur / scale:.0f}"
+    governor = gpu.get("governor")
+    return f"{span} (devfreq governor {governor})" if governor else span
 
 
 def cmd_report(args) -> int:

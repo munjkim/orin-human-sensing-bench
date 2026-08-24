@@ -12,7 +12,7 @@
 | L4T | 35.3.1 |
 | power mode | 15W |
 | jetson_clocks | INACTIVE (DVFS live) |
-| GPU freq | pinned at 625 MHz |
+| GPU freq | 625 MHz, cur 625 (devfreq governor nvhost_podgov) |
 | python | 3.8.10 |
 | mediapipe | 0.10.9 |
 | opencv | 5.0.0 |
