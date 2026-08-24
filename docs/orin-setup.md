@@ -27,11 +27,31 @@ reach for 3.9+ syntax (`dict[str, int]` outside annotations, `X | Y` unions,
 ```bash
 python3 -m venv --system-site-packages .venv
 source .venv/bin/activate
+pip install -U pip setuptools wheel     # required — see below
 pip install -e '.[dev]'
 ```
 
 `--system-site-packages` matters: it lets the venv see JetPack's system
 `python3-opencv` (4.5.4) instead of pulling a CPU-only wheel from PyPI.
+
+**Upgrading pip first is not optional here.** Ubuntu 20.04 ships pip 20.0.2,
+which predates PEP 660 and so cannot install a `pyproject.toml`-only project
+in editable mode:
+
+```
+ERROR: File "setup.py" not found. Directory cannot be installed in editable mode
+(A "pyproject.toml" file was found, but editable mode currently requires a
+setup.py based build.)
+```
+
+PEP 660 landed in pip 21.3. On Python 3.8 the upgrade resolves to pip 24.3.1
+(pip 25.0 dropped 3.8), which is fine. If you cannot upgrade pip — offline
+box, locked-down proxy — install non-editable instead; old pip still does
+PEP 517 builds, you just have to reinstall after editing the source:
+
+```bash
+pip install '.[dev]'
+```
 
 ## 2. MediaPipe
 
