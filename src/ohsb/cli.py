@@ -172,6 +172,37 @@ def cmd_list(args) -> int:
     return 0
 
 
+def _doctor_checks() -> List[dict]:
+    """Prerequisite checks, as data so both renderers share one source."""
+    from .config import PowerConfig
+    from .monitors.jtop_monitor import JtopMonitor
+    from .monitors.tegrastats import TegrastatsMonitor
+
+    checks = []
+
+    try:
+        import mediapipe
+
+        checks.append({"name": "mediapipe importable", "ok": True,
+                       "detail": getattr(mediapipe, "__version__", "?")})
+    except Exception as exc:
+        checks.append({"name": "mediapipe importable", "ok": False,
+                       "detail": str(exc).splitlines()[0]})
+
+    checks.append({"name": "jtop available", "ok": JtopMonitor.is_available(),
+                   "detail": "power backend (preferred)"})
+    checks.append({"name": "tegrastats available",
+                   "ok": TegrastatsMonitor.is_available(PowerConfig()),
+                   "detail": "power backend (fallback, needs sudo)"})
+
+    models = sorted(Path("models").glob("*")) if Path("models").is_dir() else []
+    models = [m for m in models if m.suffix in (".task", ".tflite")]
+    checks.append({"name": "model bundles present", "ok": bool(models),
+                   "detail": f"{len(models)} found in models/",
+                   "items": [m.name for m in models]})
+    return checks
+
+
 def cmd_doctor(args) -> int:
     if args.dump_jtop:
         from .monitors.jtop_monitor import dump_schema
@@ -180,49 +211,33 @@ def cmd_doctor(args) -> int:
         return 0
 
     snap = snapshot()
+    checks = _doctor_checks()
+    warnings = reproducibility_warnings(snap)
+    ok = all(c["ok"] for c in checks)
+
+    if args.json:
+        print(json.dumps(
+            {"platform": snap, "checks": checks, "warnings": warnings, "ok": ok},
+            indent=2, default=str,
+        ))
+        return 0 if ok else 1
+
     print(json.dumps(snap, indent=2, default=str))
     print()
-
-    checks: List[tuple] = []
-
-    try:
-        import mediapipe  # noqa: F401
-
-        checks.append(("mediapipe importable", True, getattr(mediapipe, "__version__", "?")))
-    except Exception as exc:
-        checks.append(("mediapipe importable", False, str(exc).splitlines()[0]))
-
-    from .config import PowerConfig
-    from .monitors.jtop_monitor import JtopMonitor
-    from .monitors.tegrastats import TegrastatsMonitor
-
-    checks.append(("jtop available", JtopMonitor.is_available(), "power backend (preferred)"))
-    checks.append((
-        "tegrastats available",
-        TegrastatsMonitor.is_available(PowerConfig()),
-        "power backend (fallback, needs sudo)",
-    ))
-
-    models = sorted(Path("models").glob("*")) if Path("models").is_dir() else []
-    models = [m for m in models if m.suffix in (".task", ".tflite")]
-    checks.append(("model bundles present", bool(models), f"{len(models)} found in models/"))
-
     print("checks:")
-    for label, ok, detail in checks:
-        status = "ok" if ok else "FAIL"
-        print(f"  [{status:<4}] {label:<24} {detail}")
-    if models:
-        for model in models:
-            print(f"        - {model.name}")
+    for check in checks:
+        status = "ok" if check["ok"] else "FAIL"
+        print(f"  [{status:<4}] {check['name']:<24} {check['detail']}")
+        for item in check.get("items", []):
+            print(f"          - {item}")
 
-    warnings = reproducibility_warnings(snap)
     if warnings:
         print()
         print("reproducibility warnings:")
         for warning in warnings:
             print(f"  ! {warning}")
 
-    return 0 if all(ok for _, ok, _ in checks) else 1
+    return 0 if ok else 1
 
 
 def _report_rows(paths: List[Path]):
@@ -419,6 +434,7 @@ def build_parser() -> argparse.ArgumentParser:
     listing.set_defaults(func=cmd_list)
 
     doctor = sub.add_parser("doctor", help="report platform state and check prerequisites")
+    doctor.add_argument("--json", action="store_true", help="machine-readable output")
     doctor.add_argument(
         "--dump-jtop", action="store_true",
         help="print one raw jtop payload (to pin the power extractors to this board)",

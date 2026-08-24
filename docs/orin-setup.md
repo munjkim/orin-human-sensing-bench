@@ -212,6 +212,14 @@ ohsb run -c configs/noop.yaml           # harness floor, no model
 ohsb doctor                             # platform state + prerequisites
 ```
 
+To hand the whole picture to someone else — or to your future self — capture
+it in one shot instead of pasting terminal output:
+
+```bash
+./scripts/collect_env.sh
+git add env && git commit -m "Add board environment snapshot" && git push
+```
+
 The `noop` run is the measurement floor. If it reports 0.05 ms and a task
 reports 1.2 ms, harness overhead is ~4% and the task number is meaningful.
 If `noop` ever creeps into the same order of magnitude as a real task, stop
