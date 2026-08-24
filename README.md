@@ -29,6 +29,7 @@ python3 -m venv --system-site-packages .venv && source .venv/bin/activate
 pip install -U pip setuptools wheel    # JetPack 5 ships pip 20.0.2, too old for PEP 660
 pip install -e '.[dev]'
 
+pip install 'mediapipe==0.10.9'    # pinned: see docs/orin-setup.md
 ./scripts/fetch_models.sh          # download MediaPipe model bundles
 sudo ./scripts/setup_orin.sh --apply   # pin clocks — do this before measuring
 ohsb doctor                        # verify prerequisites and board state
