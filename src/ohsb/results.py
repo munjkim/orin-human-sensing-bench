@@ -37,6 +37,11 @@ class RunResult:
     detections: Dict[str, Any] = field(default_factory=dict)
     power: Dict[str, Any] = field(default_factory=dict)
     energy: Dict[str, Any] = field(default_factory=dict)
+    #: Whether GPU frequency actually varied during this run — see
+    #: runner._dvfs_observed. The trustworthy source for "was jetson_clocks
+    #: really active", derived from the run itself rather than guessed
+    #: beforehand.
+    dvfs: Dict[str, Any] = field(default_factory=dict)
     #: Live-capture findings: camera baseline, realtime ratio, bottleneck verdict.
     live: Dict[str, Any] = field(default_factory=dict)
     raw_latencies_ms: Optional[List[float]] = None
@@ -153,6 +158,11 @@ def format_report(report: BenchmarkReport, verbose: bool = False) -> str:
                 f"  detections   mean={run.detections.get('mean', 0):.2f} "
                 f"per frame (sanity check only, not accuracy)"
             )
+
+        dvfs = run.dvfs
+        if dvfs.get("conclusive"):
+            tag = "DVFS LIVE" if dvfs["scaled"] else "clock steady"
+            lines.append(f"  gpu clock    {tag} — {dvfs['note']}")
 
         power = run.power
         if power.get("available"):

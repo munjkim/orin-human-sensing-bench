@@ -241,3 +241,31 @@ def test_governor_name_does_not_track_pin_state():
     # Neither capture shows a governor rename to 'userspace'.
     for payload in (GPU_BEFORE_PIN, GPU_AFTER_PIN):
         assert payload["ga10b"]["freq"]["governor"] == "nvhost_podgov"
+
+
+# -- the fourth wrong inference: a single jtop freq sample --------------
+#
+# Recorded on a fresh reboot, `jetson_clocks` never run this boot, GPU under
+# real load (36%) from the diagnostic process itself. This is what falsified
+# "jtop freq.min == freq.max means pinned": it reads identically to the
+# after-pin capture above despite jetson_clocks never having executed.
+
+GPU_UNPINNED_BUT_BUSY = {
+    "ga10b": {
+        "type": "integrated",
+        "status": {"railgate": False, "tpc_pg_mask": False, "3d_scaling": True, "load": 36.0},
+        "freq": {"governor": "nvhost_podgov", "cur": 624750, "max": 624750,
+                 "min": 624750, "GPC": [624660]},
+        "power_control": "auto",
+    }
+}
+
+
+def test_busy_but_unpinned_gpu_collapses_min_max_just_like_pinned():
+    # The whole point: this payload is indistinguishable from GPU_AFTER_PIN
+    # by min==max alone, which is exactly why that heuristic was dropped.
+    busy = extract_gpu(GPU_UNPINNED_BUT_BUSY)
+    pinned = extract_gpu(GPU_AFTER_PIN)
+    assert busy["freq_min_khz"] == busy["freq_max_khz"] == 624750
+    assert pinned["freq_min_khz"] == pinned["freq_max_khz"] == 624750
+    # Only the load differs, and load is not part of the pin decision.

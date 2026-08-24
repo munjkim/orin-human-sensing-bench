@@ -269,6 +269,7 @@ def _report_rows(paths: List[Path]):
                 "watts": run.get("energy", {}).get("avg_power_w", float("nan")),
                 "mj": run.get("energy", {}).get("mj_per_frame", float("nan")),
                 "bottleneck": (live.get("verdict", "").split(" ")[0].strip("—") or "-"),
+                "dvfs": run.get("dvfs", {}),
                 "platform": data.get("platform", {}),
                 "warnings": data.get("warnings", []),
             })
@@ -319,7 +320,9 @@ def _render_markdown(rows) -> str:
     cpu = snap.get("cpu", {})
     libs = snap.get("libraries", {})
     clocks = mode.get("jetson_clocks_active")
-    clock_state = {True: "pinned", False: "INACTIVE (DVFS live)"}.get(clocks, "unknown")
+    clock_state = {True: "pinned", False: "INACTIVE (DVFS live)"}.get(
+        clocks, "unknown (no static probe on this board is reliable — see below)"
+    )
     cpu_pinned = cpu.get("cpu_pinned")
     cpu_state = {True: "pinned", False: "not pinned"}.get(cpu_pinned, "-")
     if cpu.get("cores_with_cpufreq"):
@@ -334,7 +337,8 @@ def _render_markdown(rows) -> str:
         f"| model | {board.get('model') or '-'} |",
         f"| L4T | {board.get('l4t') or '-'} |",
         f"| power mode | {mode.get('nv_power_mode') or '-'} |",
-        f"| jetson_clocks (GPU, via jtop) | {clock_state} |",
+        f"| jetson_clocks --show (pre-run, best-effort) | {clock_state} |",
+        f"| GPU clock during these runs | {_dvfs_summary(rows)} |",
         f"| CPU frequency | {cpu_state} |",
         f"| GPU freq (sysfs, informational only) | {_freq(gpu)} |",
         f"| python | {libs.get('python') or '-'} |",
@@ -351,6 +355,25 @@ def _render_markdown(rows) -> str:
         lines += ["", "## Reproducibility warnings", ""]
         lines += [f"- {w}" for w in warnings]
     return "\n".join(lines)
+
+
+def _dvfs_summary(rows) -> str:
+    """The trustworthy pin signal: what the GPU clock actually did per run.
+
+    Pre-run probes (devfreq sysfs, governor name, a single jtop sample) were
+    each tried and falsified on this hardware — see docs/orin-setup.md. This
+    instead reports what every run's own gpu_freq_khz samples showed.
+    """
+    concluded = [r["dvfs"] for r in rows if r.get("dvfs", {}).get("conclusive")]
+    if not concluded:
+        return "not measured (no run had >=2 GPU frequency samples)"
+    scaled = sum(1 for d in concluded if d["scaled"])
+    steady = len(concluded) - scaled
+    if scaled and steady:
+        return f"varied in {scaled}/{len(concluded)} runs — mixed, check each row"
+    if scaled:
+        return f"varied (DVFS live) in all {len(concluded)} measured run(s)"
+    return f"steady in all {len(concluded)} measured run(s)"
 
 
 def _freq(gpu) -> str:
