@@ -1,0 +1,95 @@
+$ ohsb doctor --json
+
+{
+  "platform": {
+    "os": {
+      "system": "Linux",
+      "release": "5.10.104-tegra",
+      "distro": "Ubuntu 20.04.6 LTS"
+    },
+    "board": {
+      "model": "NVIDIA Orin Nano Developer Kit",
+      "is_jetson": true,
+      "l4t_raw": "# R35 (release), REVISION: 3.1, GCID: 32827747, BOARD: t186ref, EABI: aarch64, DATE: Sun Mar 19 15:19:21 UTC 2023",
+      "l4t": "35.3.1"
+    },
+    "power_mode": {
+      "nvpmodel_raw": "NV Power Mode: 15W\n0\nNVPM ERROR: Error opening /sys/kernel/nvpmodel_emc_cap/emc_iso_cap: 13\nNVPM ERROR: failed to read PARAM EMC: ARG MAX_FREQ: PATH /sys/kernel/nvpmodel_emc_cap/emc_iso_cap",
+      "nv_power_mode": "15W",
+      "nvpmodel_id": 0,
+      "jetson_clocks_show": "SOC family:tegra234  Machine:NVIDIA Orin Nano Developer Kit\nError: Run this script(/usr/bin/jetson_clocks) as a root user",
+      "jetson_clocks_active": true
+    },
+    "gpu": {
+      "devfreq": "17000000.ga10b",
+      "cur_freq_hz": 624750000,
+      "min_freq_hz": 624750000,
+      "max_freq_hz": 624750000,
+      "governor": "nvhost_podgov"
+    },
+    "cpu": {
+      "arch": "aarch64",
+      "logical_cores": 6,
+      "scaling_governor": [
+        "schedutil"
+      ],
+      "scaling_max_freq_khz": [
+        1510400
+      ],
+      "scaling_min_freq_khz": [
+        1510400
+      ],
+      "cores_with_cpufreq": 6,
+      "cores_pinned": 6,
+      "cpu_pinned": true
+    },
+    "memory": {
+      "total_mb": 6481,
+      "available_mb": 3732
+    },
+    "libraries": {
+      "python": "3.8.10",
+      "python_executable": "/home/siblab/orin-human-sensing-bench/.venv/bin/python3",
+      "numpy": "1.24.4",
+      "mediapipe": "0.10.9",
+      "cv2": "5.0.0",
+      "jtop": "7.2.1"
+    },
+    "hostname": "siblab-desktop"
+  },
+  "checks": [
+    {
+      "name": "mediapipe importable",
+      "ok": true,
+      "detail": "0.10.9"
+    },
+    {
+      "name": "jtop available",
+      "ok": true,
+      "detail": "power backend (preferred)"
+    },
+    {
+      "name": "tegrastats available",
+      "ok": true,
+      "detail": "power backend (fallback, needs sudo)"
+    },
+    {
+      "name": "model bundles present",
+      "ok": true,
+      "detail": "6 found in models/",
+      "items": [
+        "blaze_face_short_range.tflite",
+        "face_landmarker.task",
+        "mobilenet_v3_small_embedder.tflite",
+        "pose_landmarker_full.task",
+        "pose_landmarker_heavy.task",
+        "pose_landmarker_lite.task"
+      ]
+    }
+  ],
+  "warnings": [
+    "GPU devfreq governor is 'nvhost_podgov' (DVFS active); frequency will vary with load",
+    "nvpmodel mode is '15W' \u2014 record it; it caps achievable clocks"
+  ],
+  "ok": true
+}

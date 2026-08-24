@@ -1,0 +1,63 @@
+$ ohsb cameras
+
+/dev/video0  HD Pro Webcam C920  (via v4l2-ctl)
+  30 fps ceiling:  H264 1920x1080  |  MJPG 1920x1080  |  YUYV 800x448
+  336 modes -> 53 (max fps per resolution)
+  format     resolution  max fps   note
+  H264      1920x1080      30.0   compressed
+  H264      1600x896       30.0   compressed
+  H264      1280x720       30.0   compressed
+  H264       960x720       30.0   compressed
+  H264      1024x576       30.0   compressed
+  H264       800x600       30.0   compressed
+  H264       864x480       30.0   compressed
+  H264       800x448       30.0   compressed
+  H264       640x480       30.0   compressed
+  H264       640x360       30.0   compressed
+  H264       432x240       30.0   compressed
+  H264       352x288       30.0   compressed
+  H264       320x240       30.0   compressed
+  H264       320x180       30.0   compressed
+  H264       176x144       30.0   compressed
+  H264       160x120       30.0   compressed
+  H264       160x90        30.0   compressed
+  MJPG      1920x1080      30.0   compressed
+  MJPG      1600x896       30.0   compressed
+  MJPG      1280x720       30.0   compressed
+  MJPG       960x720       30.0   compressed
+  MJPG      1024x576       30.0   compressed
+  MJPG       800x600       30.0   compressed
+  MJPG       864x480       30.0   compressed
+  MJPG       800x448       30.0   compressed
+  MJPG       640x480       30.0   compressed
+  MJPG       640x360       30.0   compressed
+  MJPG       432x240       30.0   compressed
+  MJPG       352x288       30.0   compressed
+  MJPG       320x240       30.0   compressed
+  MJPG       320x180       30.0   compressed
+  MJPG       176x144       30.0   compressed
+  MJPG       160x120       30.0   compressed
+  MJPG       160x90        30.0   compressed
+  YUYV      2304x1536       2.0   
+  YUYV      2304x1296       2.0   
+  YUYV      1920x1080       5.0   
+  YUYV      1600x896        7.5   
+  YUYV      1280x720       10.0   
+  YUYV       960x720       15.0   
+  YUYV      1024x576       15.0   
+  YUYV       800x600       24.0   
+  YUYV       864x480       24.0   
+  YUYV       800x448       30.0   
+  YUYV       640x480       30.0   
+  YUYV       640x360       30.0   
+  YUYV       432x240       30.0   
+  YUYV       352x288       30.0   
+  YUYV       320x240       30.0   
+  YUYV       320x180       30.0   
+  YUYV       176x144       30.0   
+  YUYV       160x120       30.0   
+  YUYV       160x90        30.0   
+
+/dev/video1  HD Pro Webcam C920  (via v4l2-ctl)
+  metadata node, not a capture device — this is normal
+

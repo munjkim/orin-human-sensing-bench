@@ -1,0 +1,27 @@
+$ ohsb list
+
+tasks:
+  face_detector
+  face_landmarker
+  face_recognition
+  noop
+  pose_landmarker
+sources:
+  image_dir
+  synthetic
+  video
+  webcam            (live capture — use `ohsb live`, not `ohsb run`)
+power backends:
+  auto
+  jtop
+  tegrastats
+  none
+configs:
+  configs/face_detector.yaml
+  configs/face_landmarker.yaml
+  configs/face_recognition.yaml
+  configs/noop.yaml
+  configs/pose_landmarker.yaml
+  configs/webcam_face.yaml
+  configs/webcam_face_detect.yaml
+  configs/webcam_pose.yaml
