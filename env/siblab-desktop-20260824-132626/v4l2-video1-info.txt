@@ -1,0 +1,36 @@
+$ v4l2-ctl -d /dev/video1 --all
+
+Driver Info:
+	Driver name      : uvcvideo
+	Card type        : HD Pro Webcam C920
+	Bus info         : usb-3610000.xhci-2.3
+	Driver version   : 5.10.104
+	Capabilities     : 0x84a00001
+		Video Capture
+		Metadata Capture
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x04a00000
+		Metadata Capture
+		Streaming
+		Extended Pix Format
+Media Driver Info:
+	Driver name      : uvcvideo
+	Model            : HD Pro Webcam C920
+	Serial           : 2633FA1F
+	Bus info         : usb-3610000.xhci-2.3
+	Media version    : 5.10.104
+	Hardware revision: 0x00000011 (17)
+	Driver version   : 5.10.104
+Interface Info:
+	ID               : 0x03000005
+	Type             : V4L Video
+Entity Info:
+	ID               : 0x00000004 (4)
+	Name             : HD Pro Webcam C920
+	Function         : V4L2 I/O
+Priority: 2
+Format Metadata Capture:
+	Sample Format   : 'UVCH' (UVC Payload Header Metadata)
+	Buffer Size     : 1024

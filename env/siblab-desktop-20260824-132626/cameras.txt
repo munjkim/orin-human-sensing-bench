@@ -1,0 +1,49 @@
+$ ohsb cameras
+
+/dev/video0  HD Pro Webcam C920  (via v4l2-ctl)
+  format     resolution     fps   note
+  H264      1920x1080     30.0   compressed
+  H264      1920x1080     24.0   compressed
+  H264      1920x1080     20.0   compressed
+  H264      1920x1080     15.0   compressed
+  H264      1920x1080     10.0   compressed
+  H264      1920x1080      7.5   compressed
+  H264      1920x1080      5.0   compressed
+  H264      1600x896      30.0   compressed
+  H264      1600x896      24.0   compressed
+  H264      1600x896      20.0   compressed
+  H264      1600x896      15.0   compressed
+  H264      1600x896      10.0   compressed
+  H264      1600x896       7.5   compressed
+  H264      1600x896       5.0   compressed
+  H264      1280x720      30.0   compressed
+  H264      1280x720      24.0   compressed
+  H264      1280x720      20.0   compressed
+  H264      1280x720      15.0   compressed
+  H264      1280x720      10.0   compressed
+  H264      1280x720       7.5   compressed
+  H264      1280x720       5.0   compressed
+  H264      1024x576      30.0   compressed
+  H264      1024x576      24.0   compressed
+  H264      1024x576      20.0   compressed
+  H264      1024x576      15.0   compressed
+  H264      1024x576      10.0   compressed
+  H264      1024x576       7.5   compressed
+  H264      1024x576       5.0   compressed
+  H264       960x720      30.0   compressed
+  H264       960x720      24.0   compressed
+  H264       960x720      20.0   compressed
+  H264       960x720      15.0   compressed
+  H264       960x720      10.0   compressed
+  H264       960x720       7.5   compressed
+  H264       960x720       5.0   compressed
+  H264       864x480      30.0   compressed
+  H264       864x480      24.0   compressed
+  H264       864x480      20.0   compressed
+  H264       864x480      15.0   compressed
+  H264       864x480      10.0   compressed
+  ... 296 more
+
+/dev/video1  HD Pro Webcam C920  (via v4l2-ctl)
+  no modes reported
+

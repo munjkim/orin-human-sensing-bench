@@ -1,0 +1,2703 @@
+$ ohsb cameras --json
+
+{
+  "device": "/dev/video0",
+  "name": "HD Pro Webcam C920",
+  "source": "v4l2-ctl",
+  "modes": [
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 480,
+      "fps": 30.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 480,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 480,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 480,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 480,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 480,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 480,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 90,
+      "fps": 30.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 90,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 90,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 90,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 90,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 90,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 90,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 120,
+      "fps": 30.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 120,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 120,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 120,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 120,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 120,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 160,
+      "height": 120,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 176,
+      "height": 144,
+      "fps": 30.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 176,
+      "height": 144,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 176,
+      "height": 144,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 176,
+      "height": 144,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 176,
+      "height": 144,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 176,
+      "height": 144,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 176,
+      "height": 144,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 180,
+      "fps": 30.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 180,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 180,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 180,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 180,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 180,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 180,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 240,
+      "fps": 30.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 240,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 240,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 240,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 240,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 240,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 320,
+      "height": 240,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 352,
+      "height": 288,
+      "fps": 30.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 352,
+      "height": 288,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 352,
+      "height": 288,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 352,
+      "height": 288,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 352,
+      "height": 288,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 352,
+      "height": 288,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 352,
+      "height": 288,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 432,
+      "height": 240,
+      "fps": 30.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 432,
+      "height": 240,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 432,
+      "height": 240,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 432,
+      "height": 240,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 432,
+      "height": 240,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 432,
+      "height": 240,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 432,
+      "height": 240,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 360,
+      "fps": 30.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 360,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 360,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 360,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 360,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 360,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 640,
+      "height": 360,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 448,
+      "fps": 30.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 448,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 448,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 448,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 448,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 448,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 448,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 600,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 600,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 600,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 600,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 600,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 800,
+      "height": 600,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 864,
+      "height": 480,
+      "fps": 24.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 864,
+      "height": 480,
+      "fps": 20.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 864,
+      "height": 480,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 864,
+      "height": 480,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 864,
+      "height": 480,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 864,
+      "height": 480,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 960,
+      "height": 720,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 960,
+      "height": 720,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 960,
+      "height": 720,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 960,
+      "height": 720,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 1024,
+      "height": 576,
+      "fps": 15.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 1024,
+      "height": 576,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 1024,
+      "height": 576,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 1024,
+      "height": 576,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 1280,
+      "height": 720,
+      "fps": 10.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 1280,
+      "height": 720,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 1280,
+      "height": 720,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 1600,
+      "height": 896,
+      "fps": 7.5,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 1600,
+      "height": 896,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 1920,
+      "height": 1080,
+      "fps": 5.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 2304,
+      "height": 1296,
+      "fps": 2.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "YUYV",
+      "description": "YUYV 4:2:2",
+      "width": 2304,
+      "height": 1536,
+      "fps": 2.0,
+      "compressed": false
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 480,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 480,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 480,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 480,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 480,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 480,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 480,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 90,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 90,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 90,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 90,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 90,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 90,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 90,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 120,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 120,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 120,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 120,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 120,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 120,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 160,
+      "height": 120,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 176,
+      "height": 144,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 176,
+      "height": 144,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 176,
+      "height": 144,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 176,
+      "height": 144,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 176,
+      "height": 144,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 176,
+      "height": 144,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 176,
+      "height": 144,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 180,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 180,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 180,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 180,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 180,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 180,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 180,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 240,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 240,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 240,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 240,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 240,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 240,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 320,
+      "height": 240,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 352,
+      "height": 288,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 352,
+      "height": 288,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 352,
+      "height": 288,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 352,
+      "height": 288,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 352,
+      "height": 288,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 352,
+      "height": 288,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 352,
+      "height": 288,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 432,
+      "height": 240,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 432,
+      "height": 240,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 432,
+      "height": 240,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 432,
+      "height": 240,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 432,
+      "height": 240,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 432,
+      "height": 240,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 432,
+      "height": 240,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 360,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 360,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 360,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 360,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 360,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 360,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 640,
+      "height": 360,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 448,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 448,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 448,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 448,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 448,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 448,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 448,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 600,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 600,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 600,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 600,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 600,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 600,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 800,
+      "height": 600,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 864,
+      "height": 480,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 864,
+      "height": 480,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 864,
+      "height": 480,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 864,
+      "height": 480,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 864,
+      "height": 480,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 864,
+      "height": 480,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 864,
+      "height": 480,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 960,
+      "height": 720,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 960,
+      "height": 720,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 960,
+      "height": 720,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 960,
+      "height": 720,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 960,
+      "height": 720,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 960,
+      "height": 720,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 960,
+      "height": 720,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1024,
+      "height": 576,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1024,
+      "height": 576,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1024,
+      "height": 576,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1024,
+      "height": 576,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1024,
+      "height": 576,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1024,
+      "height": 576,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1024,
+      "height": 576,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1280,
+      "height": 720,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1280,
+      "height": 720,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1280,
+      "height": 720,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1280,
+      "height": 720,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1280,
+      "height": 720,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1280,
+      "height": 720,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1280,
+      "height": 720,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1600,
+      "height": 896,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1600,
+      "height": 896,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1600,
+      "height": 896,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1600,
+      "height": 896,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1600,
+      "height": 896,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1600,
+      "height": 896,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1600,
+      "height": 896,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1920,
+      "height": 1080,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1920,
+      "height": 1080,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1920,
+      "height": 1080,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1920,
+      "height": 1080,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1920,
+      "height": 1080,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "H264",
+      "description": "H.264",
+      "width": 1920,
+      "height": 1080,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 480,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 480,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 480,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 480,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 480,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 480,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 480,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 90,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 90,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 90,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 90,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 90,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 90,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 90,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 120,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 120,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 120,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 120,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 120,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 120,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 160,
+      "height": 120,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 176,
+      "height": 144,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 176,
+      "height": 144,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 176,
+      "height": 144,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 176,
+      "height": 144,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 176,
+      "height": 144,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 176,
+      "height": 144,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 176,
+      "height": 144,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 180,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 180,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 180,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 180,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 180,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 180,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 180,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 240,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 240,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 240,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 240,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 240,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 240,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 320,
+      "height": 240,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 352,
+      "height": 288,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 352,
+      "height": 288,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 352,
+      "height": 288,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 352,
+      "height": 288,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 352,
+      "height": 288,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 352,
+      "height": 288,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 352,
+      "height": 288,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 432,
+      "height": 240,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 432,
+      "height": 240,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 432,
+      "height": 240,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 432,
+      "height": 240,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 432,
+      "height": 240,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 432,
+      "height": 240,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 432,
+      "height": 240,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 360,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 360,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 360,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 360,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 360,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 360,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 640,
+      "height": 360,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 448,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 448,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 448,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 448,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 448,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 448,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 448,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 600,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 600,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 600,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 600,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 600,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 600,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 800,
+      "height": 600,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 864,
+      "height": 480,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 864,
+      "height": 480,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 864,
+      "height": 480,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 864,
+      "height": 480,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 864,
+      "height": 480,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 864,
+      "height": 480,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 864,
+      "height": 480,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 960,
+      "height": 720,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 960,
+      "height": 720,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 960,
+      "height": 720,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 960,
+      "height": 720,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 960,
+      "height": 720,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 960,
+      "height": 720,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 960,
+      "height": 720,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1024,
+      "height": 576,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1024,
+      "height": 576,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1024,
+      "height": 576,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1024,
+      "height": 576,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1024,
+      "height": 576,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1024,
+      "height": 576,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1024,
+      "height": 576,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1280,
+      "height": 720,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1280,
+      "height": 720,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1280,
+      "height": 720,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1280,
+      "height": 720,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1280,
+      "height": 720,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1280,
+      "height": 720,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1280,
+      "height": 720,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1600,
+      "height": 896,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1600,
+      "height": 896,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1600,
+      "height": 896,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1600,
+      "height": 896,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1600,
+      "height": 896,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1600,
+      "height": 896,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1600,
+      "height": 896,
+      "fps": 5.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1920,
+      "height": 1080,
+      "fps": 30.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1920,
+      "height": 1080,
+      "fps": 24.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1920,
+      "height": 1080,
+      "fps": 20.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1920,
+      "height": 1080,
+      "fps": 15.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1920,
+      "height": 1080,
+      "fps": 10.0,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1920,
+      "height": 1080,
+      "fps": 7.5,
+      "compressed": true
+    },
+    {
+      "fourcc": "MJPG",
+      "description": "Motion-JPEG",
+      "width": 1920,
+      "height": 1080,
+      "fps": 5.0,
+      "compressed": true
+    }
+  ]
+}
+{
+  "device": "/dev/video1",
+  "name": "HD Pro Webcam C920",
+  "source": "v4l2-ctl",
+  "modes": []
+}

@@ -1,0 +1,271 @@
+$ ohsb doctor --dump-jtop
+
+{
+  "available": true,
+  "power": {
+    "rail": {
+      "VDD_CPU_GPU_CV": {
+        "volt": 5056,
+        "curr": 112,
+        "warn": 32760,
+        "crit": 32760,
+        "power": 566,
+        "online": true,
+        "avg": 566
+      },
+      "VDD_SOC": {
+        "volt": 5064,
+        "curr": 272,
+        "warn": 32760,
+        "crit": 32760,
+        "power": 1377,
+        "online": true,
+        "avg": 1377
+      }
+    },
+    "tot": {
+      "volt": 5064,
+      "curr": 824,
+      "warn": 2984,
+      "crit": 3976,
+      "power": 4172,
+      "online": true,
+      "avg": 4172,
+      "name": "VDD_IN"
+    }
+  },
+  "gpu": "{'ga10b': {'type': 'integrated', 'status': {'railgate': False, 'tpc_pg_mask': False, '3d_scaling': True, 'load': 0.0}, 'freq': {'governor': 'nvhost_podgov', 'cur': 306000, 'max': 624750, 'min': 306000, 'GPC': [305965]}, 'power_control': 'auto'}}",
+  "cpu": {
+    "total": {
+      "user": 3.1691864202907567,
+      "nice": 0.2867645533918165,
+      "system": 2.915603807627699,
+      "idle": 92.40688317882993
+    },
+    "cpu": [
+      {
+        "online": true,
+        "governor": "schedutil",
+        "freq": {
+          "min": 729600,
+          "max": 1510400,
+          "cur": 729600
+        },
+        "info_freq": {
+          "min": 115200,
+          "max": 1510400,
+          "cur": 729600
+        },
+        "idle_state": {
+          "WFI": 0,
+          "c7": 0
+        },
+        "model": "ARMv8 Processor rev 1 (v8l)",
+        "user": 2.5508314478053697,
+        "nice": 0.19233941370713992,
+        "system": 3.134385494246935,
+        "idle": 92.57937113103667
+      },
+      {
+        "online": true,
+        "governor": "schedutil",
+        "freq": {
+          "min": 729600,
+          "max": 1510400,
+          "cur": 729600
+        },
+        "info_freq": {
+          "min": 115200,
+          "max": 1510400,
+          "cur": 729600
+        },
+        "idle_state": {
+          "WFI": 0,
+          "c7": 0
+        },
+        "model": "ARMv8 Processor rev 1 (v8l)",
+        "user": 3.434366680765307,
+        "nice": 0.30757843405568136,
+        "system": 2.9274376135147913,
+        "idle": 92.06889259323762
+      },
+      {
+        "online": true,
+        "governor": "schedutil",
+        "freq": {
+          "min": 729600,
+          "max": 1510400,
+          "cur": 1510400
+        },
+        "info_freq": {
+          "min": 115200,
+          "max": 1510400,
+          "cur": 1510400
+        },
+        "idle_state": {
+          "WFI": 0,
+          "c7": 0
+        },
+        "model": "ARMv8 Processor rev 1 (v8l)",
+        "user": 3.382596766717786,
+        "nice": 0.20717394212194642,
+        "system": 2.8416425845104816,
+        "idle": 92.41637607358719
+      },
+      {
+        "online": true,
+        "governor": "schedutil",
+        "freq": {
+          "min": 729600,
+          "max": 1510400,
+          "cur": 1510400
+        },
+        "info_freq": {
+          "min": 115200,
+          "max": 1510400,
+          "cur": 1510400
+        },
+        "idle_state": {
+          "WFI": 0,
+          "c7": 0
+        },
+        "model": "ARMv8 Processor rev 1 (v8l)",
+        "user": 3.1817983969755192,
+        "nice": 0.49029666523650517,
+        "system": 2.7045597278962323,
+        "idle": 92.4633598845922
+      },
+      {
+        "online": true,
+        "governor": "schedutil",
+        "freq": {
+          "min": 729600,
+          "max": 1510400,
+          "cur": 729600
+        },
+        "info_freq": {
+          "min": 115200,
+          "max": 1510400,
+          "cur": 729600
+        },
+        "idle_state": {
+          "WFI": 0,
+          "c7": 0
+        },
+        "model": "ARMv8 Processor rev 1 (v8l)",
+        "user": 3.1244650155164955,
+        "nice": 0.32682688446825264,
+        "system": 2.910004326565423,
+        "idle": 92.54430060603043
+      },
+      {
+        "online": true,
+        "governor": "schedutil",
+        "freq": {
+          "min": 729600,
+          "max": 1510400,
+          "cur": 729600
+        },
+        "info_freq": {
+          "min": 115200,
+          "max": 1510400,
+          "cur": 729600
+        },
+        "idle_state": {
+          "WFI": 0,
+          "c7": 0
+        },
+        "model": "ARMv8 Processor rev 1 (v8l)",
+        "user": 3.3402072116625763,
+        "nice": 0.19533011722917387,
+        "system": 2.975051865122688,
+        "idle": 92.37403851238075
+      }
+    ]
+  },
+  "memory": "{'RAM': {'tot': 6636128, 'used': 3038940, 'free': 564388, 'buffers': 70496, 'cached': 3084052, 'shared': 401048, 'lfb': 4, 'shared_label': 'Shared'}, 'SWAP': {'tot': 3318048, 'used': 0, 'cached': 0, 'table': {'/dev/zram0': {'type': 'zram', 'prio': 5, 'size': 553008, 'used': 0, 'boot': False}, '/dev/zram1': {'type': 'zram', 'prio': 5, 'size': 553008, 'used': 0, 'boot': False}, '/dev/zram2': {'type': 'zram', 'prio': 5, 'size': 553008, 'used': 0, 'boot': False}, '/dev/zram3': {'type': 'zram', 'prio': 5, 'size': 553008, 'used': 0, 'boot': False}, '/dev/zram4': {'type': 'zram', 'prio': 5, 'size': 553008, 'used': 0, 'boot': False}, '/dev/zram5': {'type': 'zram', 'prio': 5, 'size': 553008, 'used': 0, 'boot': False}}}, 'EMC': {'cur': 665600, 'max': 2133000, 'min': 204000, 'override': 0, 'val': 0, 'online': True}}",
+  "temperature": {
+    "CPU": {
+      "temp": 48.343,
+      "online": true
+    },
+    "CV0": {
+      "temp": -256.0,
+      "online": false
+    },
+    "CV1": {
+      "temp": -256.0,
+      "online": false
+    },
+    "CV2": {
+      "temp": -256.0,
+      "online": false
+    },
+    "GPU": {
+      "temp": 47.937,
+      "online": true
+    },
+    "SOC0": {
+      "temp": 45.687,
+      "online": true
+    },
+    "SOC1": {
+      "temp": 46.406,
+      "online": true
+    },
+    "SOC2": {
+      "temp": 47.187,
+      "online": true
+    },
+    "tj": {
+      "temp": 48.343,
+      "online": true
+    }
+  },
+  "board": {
+    "hardware": {
+      "Model": "NVIDIA Orin Nano Developer Kit",
+      "699-level Part Number": "699-13767-0005-300 M.1",
+      "P-Number": "p3767-0005",
+      "Module": "NVIDIA Jetson Orin Nano (Developer kit)",
+      "SoC": "tegra23x",
+      "CUDA Arch BIN": "8.7",
+      "Codename": "P3768",
+      "Serial Number": "1421024233521",
+      "L4T": "35.3.1",
+      "Jetpack": "5.1.1"
+    },
+    "cpu": {
+      "Model": "Arm Cortex-A78AE",
+      "Architecture": "Armv8.2-A",
+      "Configuration": "6 cores",
+      "Revision": "r0p1",
+      "MIDR": "0x410fd421",
+      "Vector ISA": "NEON",
+      "Numeric formats": "FP16",
+      "Integer ML": "INT8 Dot Product",
+      "Atomics": "Arm LSE",
+      "Cryptography": "AES, SHA-1, SHA-2, CRC32",
+      "L1 Data Cache": "393216",
+      "L1 Instruction Cache": "393216",
+      "L2 Cache": "1572864",
+      "L3 Cache": "12582912"
+    },
+    "platform": {
+      "Machine": "aarch64",
+      "System": "Linux",
+      "Distribution": "Ubuntu 20.04 focal",
+      "Release": "5.10.104-tegra",
+      "Python": "3.8.10"
+    },
+    "libraries": {
+      "CUDA": "11.4.315",
+      "OpenCV": "4.5.4",
+      "OpenCV-Cuda": false,
+      "cuDNN": "0.86.0",
+      "TensorRT": "8.5.2.2",
+      "VPI": "2.2.7.0",
+      "Vulkan": "1.3.204"
+    }
+  }
+}
