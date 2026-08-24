@@ -1,0 +1,64 @@
+$ bash /home/siblab/orin-human-sensing-bench/scripts/diagnose_clocks.sh
+
+
+== jetson_clocks --show  (authoritative; needs root)
+SOC family:tegra234  Machine:NVIDIA Orin Nano Developer Kit
+Online CPUs: 0-5
+cpu0: Online=1 Governor=schedutil MinFreq=1510400 MaxFreq=1510400 CurrentFreq=1510400 IdleStates: WFI=0 c7=0 
+cpu1: Online=1 Governor=schedutil MinFreq=1510400 MaxFreq=1510400 CurrentFreq=1510400 IdleStates: WFI=0 c7=0 
+cpu2: Online=1 Governor=schedutil MinFreq=1510400 MaxFreq=1510400 CurrentFreq=1510400 IdleStates: WFI=0 c7=0 
+cpu3: Online=1 Governor=schedutil MinFreq=1510400 MaxFreq=1510400 CurrentFreq=1510400 IdleStates: WFI=0 c7=0 
+cpu4: Online=1 Governor=schedutil MinFreq=1510400 MaxFreq=1510400 CurrentFreq=1510400 IdleStates: WFI=0 c7=0 
+cpu5: Online=1 Governor=schedutil MinFreq=1510400 MaxFreq=1510400 CurrentFreq=1510400 IdleStates: WFI=0 c7=0 
+GPU MinFreq=624750000 MaxFreq=624750000 CurrentFreq=624750000
+EMC MinFreq=204000000 MaxFreq=2133000000 CurrentFreq=2133000000 FreqOverride=1
+FAN Dynamic Speed control=inactive hwmon2_pwm1=255
+NV Power Mode: 15W
+
+== nvpmodel
+NV Power Mode: 15W
+0
+NVPM ERROR: Error opening /sys/kernel/nvpmodel_emc_cap/emc_iso_cap: 13
+
+== GPU devfreq node (/sys/class/devfreq)
+  node: 17000000.ga10b
+    governor                 nvhost_podgov
+    cur_freq                 624750000
+    min_freq                 624750000
+    max_freq                 624750000
+    available_frequencies    306000000 408000000 510000000 612000000 624750000
+    available_governors      nvhost_podgov wmark_active userspace performance simple_ondemand
+    target_freq              624750000
+    polling_interval         25
+
+== GPU railgate / scaling (platform node)
+  /sys/devices/17000000.ga10b/railgate_enable                      0
+  /sys/devices/17000000.ga10b/enable_3d_scaling                    1
+
+== CPU cpufreq (cpu0 and cpu5)
+  cpu0
+    scaling_governor         schedutil
+    scaling_cur_freq         1510400
+    scaling_min_freq         1510400
+    scaling_max_freq         1510400
+    cpuinfo_min_freq         115200
+    cpuinfo_max_freq         1510400
+  cpu5
+    scaling_governor         schedutil
+    scaling_cur_freq         1510400
+    scaling_min_freq         1510400
+    scaling_max_freq         1510400
+    cpuinfo_min_freq         115200
+    cpuinfo_max_freq         1510400
+
+== EMC
+
+== jtop's view of the GPU
+  type: GPU
+  {'ga10b': {'type': 'integrated', 'status': {'railgate': False, 'tpc_pg_mask': False, '3d_scaling': True, 'load': 41.3}, 'freq': {'governor': 'nvhost_podgov', 'cur': 624750, 'max': 624750, 'min': 624750, 'GPC': [624670]}, 'power_control': 'auto'}}
+
+== what ohsb currently concludes
+  gpu_freq():            {'devfreq': '17000000.ga10b', 'cur_freq_hz': 624750000, 'min_freq_hz': 624750000, 'max_freq_hz': 624750000, 'governor': 'nvhost_podgov'}
+  jetson_clocks_active:  True
+  ! GPU devfreq governor is 'nvhost_podgov' (DVFS active); frequency will vary with load
+  ! nvpmodel mode is '15W' — record it; it caps achievable clocks

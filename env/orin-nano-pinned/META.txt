@@ -1,0 +1,4 @@
+collected: 2026-08-24T14:38:23+09:00
+host: siblab-desktop
+cwd: /home/siblab/orin-human-sensing-bench
+git: b3b1baf

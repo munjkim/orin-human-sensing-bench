@@ -1,0 +1,6 @@
+$ jetson_clocks --show
+
+SOC family:tegra234  Machine:NVIDIA Orin Nano Developer Kit
+Error: Run this script(/usr/bin/jetson_clocks) as a root user
+
+[exit 1]
