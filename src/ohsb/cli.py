@@ -224,6 +224,125 @@ def cmd_doctor(args) -> int:
     return 0 if all(ok for _, ok, _ in checks) else 1
 
 
+def _report_rows(paths: List[Path]):
+    """Flatten result files into one row per measured run."""
+    rows = []
+    for path in paths:
+        try:
+            data = load_report(path)
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"{path}: unreadable ({exc})", file=sys.stderr)
+            continue
+        task = data.get("task", {})
+        source = data.get("source", {})
+        for run in data.get("runs", []):
+            lat = run.get("latency_ms", {})
+            live = run.get("live", {})
+            rows.append({
+                "name": run.get("name", "?"),
+                "mode": data.get("mode", "offline"),
+                "task": task.get("type"),
+                "delegate": task.get("delegate"),
+                "model": Path(str(task.get("model") or "-")).name,
+                "res": f"{source.get('width', '?')}x{source.get('height', '?')}",
+                "p50": lat.get("p50", float("nan")),
+                "p95": lat.get("p95", float("nan")),
+                "fps": run.get("throughput_fps", float("nan")),
+                # The capture-only ceiling; blank for offline runs.
+                "cam": live.get("camera_baseline_fps", float("nan")),
+                "watts": run.get("energy", {}).get("avg_power_w", float("nan")),
+                "mj": run.get("energy", {}).get("mj_per_frame", float("nan")),
+                "bottleneck": (live.get("verdict", "").split(" ")[0].strip("—") or "-"),
+                "platform": data.get("platform", {}),
+                "warnings": data.get("warnings", []),
+            })
+    return rows
+
+
+def _num(value, spec=".2f", dash="-"):
+    return dash if value != value else format(value, spec)
+
+
+def _render_text(rows) -> str:
+    header = (
+        f"{'run':<30} {'del':<4} {'res':>9} "
+        f"{'p50':>7} {'p95':>7} {'fps':>7} {'cam':>7} {'W':>6} {'mJ/f':>8}  bottleneck"
+    )
+    lines = [header, "-" * len(header)]
+    for r in rows:
+        lines.append(
+            f"{r['name'][:30]:<30} {str(r['delegate'])[:4]:<4} {r['res']:>9} "
+            f"{_num(r['p50']):>7} {_num(r['p95']):>7} {_num(r['fps'], '.1f'):>7} "
+            f"{_num(r['cam'], '.1f'):>7} {_num(r['watts']):>6} {_num(r['mj'], '.1f'):>8}  "
+            f"{r['bottleneck']}"
+        )
+    return "\n".join(lines)
+
+
+def _render_markdown(rows) -> str:
+    """A committable summary: the table plus the board state behind it.
+
+    A published benchmark without its platform snapshot is not reproducible,
+    so the board, power mode and clock state travel with the numbers.
+    """
+    lines = ["| run | task | delegate | resolution | p50 ms | p95 ms | fps | camera fps "
+             "| W | mJ/frame | bottleneck |",
+             "|---|---|---|---|---:|---:|---:|---:|---:|---:|---|"]
+    for r in rows:
+        lines.append(
+            f"| `{r['name']}` | {r['task']} | {r['delegate']} | {r['res']} "
+            f"| {_num(r['p50'])} | {_num(r['p95'])} | {_num(r['fps'], '.1f')} "
+            f"| {_num(r['cam'], '.1f')} | {_num(r['watts'])} | {_num(r['mj'], '.1f')} "
+            f"| {r['bottleneck']} |"
+        )
+
+    snap = rows[0]["platform"] if rows else {}
+    board = snap.get("board", {})
+    mode = snap.get("power_mode", {})
+    gpu = snap.get("gpu", {})
+    libs = snap.get("libraries", {})
+    clocks = mode.get("jetson_clocks_active")
+    clock_state = {True: "pinned", False: "INACTIVE (DVFS live)"}.get(clocks, "-")
+
+    lines += [
+        "",
+        "## Board state",
+        "",
+        "| | |",
+        "|---|---|",
+        f"| model | {board.get('model') or '-'} |",
+        f"| L4T | {board.get('l4t') or '-'} |",
+        f"| power mode | {mode.get('nv_power_mode') or '-'} |",
+        f"| jetson_clocks | {clock_state} |",
+        f"| GPU freq | {_freq(gpu)} |",
+        f"| python | {libs.get('python') or '-'} |",
+        f"| mediapipe | {libs.get('mediapipe') or 'not installed'} |",
+        f"| opencv | {libs.get('cv2') or 'not installed'} |",
+    ]
+
+    warnings = []
+    for r in rows:
+        for w in r["warnings"]:
+            if w not in warnings:
+                warnings.append(w)
+    if warnings:
+        lines += ["", "## Reproducibility warnings", ""]
+        lines += [f"- {w}" for w in warnings]
+    return "\n".join(lines)
+
+
+def _freq(gpu) -> str:
+    lo, hi = gpu.get("min_freq_hz"), gpu.get("max_freq_hz")
+    cur = gpu.get("cur_freq_hz")
+    if lo is None or hi is None:
+        return "-"
+    scale = 1e6
+    if lo == hi:
+        return f"pinned at {hi / scale:.0f} MHz"
+    return f"{lo / scale:.0f}-{hi / scale:.0f} MHz (cur {cur / scale:.0f})" if cur else \
+           f"{lo / scale:.0f}-{hi / scale:.0f} MHz"
+
+
 def cmd_report(args) -> int:
     """Compare stored result files as one table."""
     paths: List[Path] = []
@@ -234,39 +353,18 @@ def cmd_report(args) -> int:
         print("no result files found", file=sys.stderr)
         return 1
 
-    header = (
-        f"{'run':<30} {'del':<4} {'res':>9} "
-        f"{'p50':>7} {'p95':>7} {'fps':>7} {'cam':>7} {'W':>6} {'mJ/f':>8}  bottleneck"
-    )
-    print(header)
-    print("-" * len(header))
-    for path in paths:
-        try:
-            data = load_report(path)
-        except (OSError, json.JSONDecodeError) as exc:
-            print(f"{path}: unreadable ({exc})", file=sys.stderr)
-            continue
-        task = data.get("task", {})
-        source = data.get("source", {})
-        res = f"{source.get('width', '?')}x{source.get('height', '?')}"
-        for run in data.get("runs", []):
-            lat = run.get("latency_ms", {})
-            energy = run.get("energy", {})
-            live = run.get("live", {})
-            # `cam` is the capture-only baseline; a live fps at or near it
-            # means the camera is the ceiling, not the model.
-            print(
-                f"{run.get('name', '?')[:30]:<30} "
-                f"{str(task.get('delegate'))[:4]:<4} "
-                f"{res:>9} "
-                f"{lat.get('p50', float('nan')):>7.2f} "
-                f"{lat.get('p95', float('nan')):>7.2f} "
-                f"{run.get('throughput_fps', float('nan')):>7.1f} "
-                f"{live.get('camera_baseline_fps', float('nan')):>7.1f} "
-                f"{energy.get('avg_power_w', float('nan')):>6.2f} "
-                f"{energy.get('mj_per_frame', float('nan')):>8.1f}  "
-                f"{live.get('verdict', '').split(' ')[0].strip('—') or '-'}"
-            )
+    rows = _report_rows(paths)
+    if not rows:
+        print("no runs found in the given files", file=sys.stderr)
+        return 1
+
+    text = _render_markdown(rows) if args.markdown else _render_text(rows)
+    if args.out:
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_text(text + "\n", encoding="utf-8")
+        print(f"wrote {args.out}")
+    else:
+        print(text)
     return 0
 
 
@@ -328,6 +426,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     report = sub.add_parser("report", help="compare stored result files")
     report.add_argument("paths", nargs="+", help="result .json files or directories")
+    report.add_argument(
+        "--markdown", action="store_true",
+        help="render as markdown with the board state, for committing under benchmarks/",
+    )
+    report.add_argument("-o", "--out", help="write to this file instead of stdout")
     report.set_defaults(func=cmd_report)
 
     return parser

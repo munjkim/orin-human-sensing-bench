@@ -57,6 +57,7 @@ For the webcam workflow — USB bandwidth, MJPG vs YUYV, stale frames — see
 | `ohsb doctor` | board state, prerequisites, reproducibility warnings |
 | `ohsb doctor --dump-jtop` | raw jtop payload, to pin the power extractors |
 | `ohsb report <files/dirs>` | compare stored results as one table |
+| `ohsb report --markdown -o F` | generate a committable summary with the board state |
 
 Any config value can be overridden without editing the file:
 
@@ -143,6 +144,17 @@ Reproducibility warnings — DVFS active, wrong governor, low free memory —
 are recorded *in* the result, so a run collected under sloppy conditions
 stays interpretable later; it just is not comparable to a pinned one.
 
+`results/` is gitignored scratch space. Runs worth keeping are promoted into
+[`benchmarks/`](benchmarks/), which is committed:
+
+```bash
+./scripts/publish_results.sh orin-nano-delegate-cpu-vs-gpu
+```
+
+That copies the JSON files and generates a summary carrying the comparison
+table *and* the board state behind it — a published latency number without
+its clock state is not a result, it is an anecdote.
+
 ## Layout
 
 ```
@@ -158,7 +170,8 @@ src/ohsb/
   monitors/      jtop (preferred) | tegrastats (fallback)
   metrics/       latency/percentile aggregation
 configs/         one YAML per benchmark
-scripts/         fetch_models | setup_orin | sweep | camera_matrix
+scripts/         fetch_models | setup_orin | sweep | camera_matrix | publish_results
+benchmarks/      committed measurement records (results/ is scratch)
 docs/            board setup and gotchas
 ```
 
