@@ -72,3 +72,27 @@ def to_mp_image(image: np.ndarray):
 def take(options: Dict[str, Any], key: str, default):
     value = options.get(key, default)
     return type(default)(value) if value is not None else default
+
+
+def create_from_options(mp_class, options, cfg):
+    """``<Class>.create_from_options`` with an actionable GPU-delegate error.
+
+    MediaPipe's Linux/aarch64 PyPI wheel is compiled with GPU support removed
+    entirely, not just CUDA — even the OpenGL ES delegate is unavailable. It
+    fails with a generic ``NotImplementedError`` naming an internal
+    calculator, which explains nothing to someone hitting it fresh. There is
+    no runtime flag to enable it; see docs/orin-setup.md for what genuine
+    GPU/CUDA acceleration on this board would actually require.
+    """
+    try:
+        return mp_class.create_from_options(options)
+    except NotImplementedError as exc:
+        if cfg.delegate == "gpu" and "GPU processing is disabled" in str(exc):
+            raise NotImplementedError(
+                "task.delegate=gpu failed: this MediaPipe build has GPU support "
+                "compiled out entirely (build flag MEDIAPIPE_DISABLE_GPU) — this is "
+                "not a board or config problem, the official PyPI Linux/aarch64 wheel "
+                "ships this way. See 'GPU delegate' in docs/orin-setup.md for what "
+                "actually getting GPU acceleration would require."
+            ) from exc
+        raise

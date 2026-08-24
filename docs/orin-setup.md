@@ -116,13 +116,52 @@ USB UVC cameras — what this repo benchmarks — do not need that.
 ohsb doctor        # reports the mediapipe version it can import
 ```
 
-### The GPU delegate is not TensorRT
+### The GPU delegate is not TensorRT — and on this wheel, not available at all
 
 MediaPipe's GPU delegate on Jetson runs through **OpenGL ES compute shaders,
-not CUDA or TensorRT**. `delegate: gpu` is therefore not a TensorRT
-comparison, and on small models it can lose to CPU — the upload, shader
-dispatch and readback can cost more than the inference saves. That result is
-worth measuring, not worth assuming.
+not CUDA or TensorRT**. `delegate: gpu` was never going to be a TensorRT
+comparison.
+
+Worse, on this board it does not run at all. `pip install mediapipe==0.10.9`
+pulls the **official PyPI wheel for Linux/aarch64, which ships with GPU
+support compiled out entirely** — not just CUDA, the OpenGL ES delegate too.
+Confirmed by actually trying it:
+
+```
+NotImplementedError: ValidatedGraphConfig Initialization failed.
+ImageCloneCalculator: GPU processing is disabled in build flags
+```
+
+`ImageCloneCalculator: GPU processing is disabled in build flags` is
+MediaPipe's own message for a binary built with `MEDIAPIPE_DISABLE_GPU=1`.
+There is no runtime flag, environment variable, or config option that
+un-disables a build flag — this needs a different binary. `ohsb` now raises
+a clearer error pointing here when this happens, instead of the bare
+calculator name.
+
+**What would actually enable it**, roughly in order of effort:
+
+1. **Build MediaPipe from source** with GPU enabled
+   (`bazel build --define MEDIAPIPE_DISABLE_GPU=0 ...`), linking against
+   this board's EGL/GLES libraries. Multi-hour Bazel build on an ARM SBC;
+   Jetson-specific quirks are common. Gets you the OpenGL ES delegate — the
+   same one this project already found is not a TensorRT comparison.
+2. **A community or NVIDIA-provided wheel** built with GPU support for this
+   JetPack/L4T version, if one exists — not verified here, would need
+   checking against the actual JetPack 5.1.1 / Python 3.8 combination.
+3. **Skip MediaPipe's own GPU delegate and go straight to TensorRT**: convert
+   the task's `.tflite`/`.task` model to ONNX then to a TensorRT engine, and
+   run inference through TensorRT directly instead of through MediaPipe's
+   calculator graph. This is real CUDA-core acceleration and reuses the
+   TensorRT 8.5.2 already on this board, but it is a different pipeline —
+   MediaPipe's Python Tasks API has no TensorRT backend, so this would sit
+   outside `ohsb`'s current task abstraction (feasible to add as a new task
+   type; landmark-model conversion is not always clean, and would need to be
+   verified per model).
+
+For this project's current scope, (1) and (2) are the closer options if a
+CPU vs. GPU-delegate comparison specifically is the goal; (3) is the option
+if the goal is genuine CUDA/TensorRT throughput, independent of MediaPipe.
 
 ## 3. Put the board in a repeatable state
 

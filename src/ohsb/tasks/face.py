@@ -11,6 +11,7 @@ from . import register
 from .base import InferResult, Task
 from .mediapipe_common import (
     base_options,
+    create_from_options,
     import_mediapipe,
     resolve_model,
     running_mode,
@@ -37,7 +38,7 @@ class FaceDetectorTask(Task):
             min_detection_confidence=take(opts, "min_detection_confidence", 0.5),
             min_suppression_threshold=take(opts, "min_suppression_threshold", 0.3),
         )
-        self._detector = vision.FaceDetector.create_from_options(options)
+        self._detector = create_from_options(vision.FaceDetector, options, self.cfg)
 
     def infer(self, frame: Frame) -> InferResult:
         image = to_mp_image(frame.image)
@@ -78,7 +79,7 @@ class FaceLandmarkerTask(Task):
                 opts, "output_facial_transformation_matrixes", False
             ),
         )
-        self._landmarker = vision.FaceLandmarker.create_from_options(options)
+        self._landmarker = create_from_options(vision.FaceLandmarker, options, self.cfg)
 
     def infer(self, frame: Frame) -> InferResult:
         image = to_mp_image(frame.image)
@@ -124,12 +125,14 @@ class FaceRecognitionTask(Task):
         _, mp_python, vision = import_mediapipe()
         opts = self.cfg.options
 
-        self._detector = vision.FaceDetector.create_from_options(
+        self._detector = create_from_options(
+            vision.FaceDetector,
             vision.FaceDetectorOptions(
                 base_options=base_options(self.cfg, self.cfg.type),
                 running_mode=vision.RunningMode.IMAGE,
                 min_detection_confidence=take(opts, "min_detection_confidence", 0.5),
-            )
+            ),
+            self.cfg,
         )
 
         embedder_model = opts.get("embedder_model")
@@ -143,7 +146,8 @@ class FaceRecognitionTask(Task):
             if self.cfg.delegate == "gpu"
             else mp_python.BaseOptions.Delegate.CPU
         )
-        self._embedder = vision.ImageEmbedder.create_from_options(
+        self._embedder = create_from_options(
+            vision.ImageEmbedder,
             vision.ImageEmbedderOptions(
                 base_options=mp_python.BaseOptions(
                     model_asset_path=str(resolve_model(embedder_model, "face_recognition")),
@@ -152,7 +156,8 @@ class FaceRecognitionTask(Task):
                 running_mode=vision.RunningMode.IMAGE,
                 l2_normalize=take(opts, "l2_normalize", True),
                 quantize=take(opts, "quantize", False),
-            )
+            ),
+            self.cfg,
         )
         self._max_faces = take(opts, "max_faces", 4)
         self._margin = take(opts, "crop_margin", 0.2)
