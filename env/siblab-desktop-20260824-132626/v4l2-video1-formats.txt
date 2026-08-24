@@ -1,0 +1,5 @@
+$ v4l2-ctl -d /dev/video1 --list-formats-ext
+
+ioctl: VIDIOC_ENUM_FMT
+	Type: Video Capture
+
