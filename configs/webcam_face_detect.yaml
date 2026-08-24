@@ -2,7 +2,7 @@
 # The cheapest of the face tasks: if this one is still camera-bound, the
 # camera is the ceiling for every face workload on this board.
 run:
-  name: webcam-face-detect-720p
+  name: webcam-face-detect-1080p
   iterations: 300
   warmup: 30
   repeat: 1
@@ -17,8 +17,8 @@ task:
 
 camera:
   device: 0
-  width: 1280
-  height: 720
+  width: 1920
+  height: 1080
   fps: 30
   fourcc: MJPG
   buffersize: 1
