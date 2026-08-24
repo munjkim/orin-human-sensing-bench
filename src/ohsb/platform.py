@@ -108,18 +108,22 @@ def _jetson_clocks_active(show_output: Optional[str]) -> Optional[bool]:
     pinned. jtop is therefore the only reliable source found so far; if it
     is unavailable this returns None (unknown) instead of guessing again.
     """
-    from .monitors.jtop_monitor import quick_gpu_state
-
-    state = quick_gpu_state()
-    if state and "freq_min_khz" in state and "freq_max_khz" in state:
-        return state["freq_min_khz"] == state["freq_max_khz"]
+    # A fourth attempt was tried and falsified before this one shipped: a
+    # single jtop sample of gpu.freq.min/max. It looked right in a two-point
+    # before/after comparison (306000/624750 -> 624750/624750), but a probe
+    # taken on a *fresh reboot* — jetson_clocks never run — showed the exact
+    # same collapsed 624750/624750 the moment the GPU had real load (36%).
+    # nvhost_podgov appears to narrow its reported min/max toward the
+    # instantaneous operating point under load, which looks identical to
+    # "pinned" in a single snapshot. There is no static probe, root or not,
+    # that has held up on this hardware — see docs/orin-setup.md for the
+    # falsifying data. The reliable version of this question is answered
+    # after the fact, from what the GPU frequency actually did across an
+    # entire measured run (see RunResult.live / power['gpu_freq_khz'] and
+    # runner._dvfs_observed), not guessed beforehand from one sample.
     if show_output:
         match = re.search(r"GPU MinFreq=(\d+)\s+MaxFreq=(\d+)", show_output)
         if match:
-            # jetson_clocks --show reflects what it just set, so a single
-            # point here is suggestive, but — unlike a jtop before/after
-            # comparison — it cannot rule out the value being a coincidence
-            # of this board's defaults.
             return match.group(1) == match.group(2)
     return None
 
@@ -298,6 +302,15 @@ def reproducibility_warnings(snap: Optional[Dict[str, Any]] = None) -> List[str]
             f"GPU devfreq governor is {gpu['governor']!r} (DVFS active); "
             "frequency will vary with load"
         )
+    if snap["power_mode"].get("jetson_clocks_active") is None:
+        warnings.append(
+            "cannot verify whether jetson_clocks is active from a static probe on this "
+            "board (every such probe tried has been unreliable — see docs/orin-setup.md). "
+            "Run `sudo jetson_clocks` before benchmarking, and check each RESULT's "
+            "`dvfs` field afterward: it reports whether the GPU clock actually varied "
+            "during that specific run, which is the trustworthy version of this check."
+        )
+
     cpu = snap.get("cpu", {})
     if cpu.get("cpu_pinned") is False:
         warnings.append(

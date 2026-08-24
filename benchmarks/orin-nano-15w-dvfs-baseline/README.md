@@ -11,8 +11,10 @@
 | model | NVIDIA Orin Nano Developer Kit |
 | L4T | 35.3.1 |
 | power mode | 15W |
-| jetson_clocks | INACTIVE (DVFS live) |
-| GPU freq | 625 MHz, cur 625 (devfreq governor nvhost_podgov) |
+| jetson_clocks --show (pre-run, best-effort) | INACTIVE (DVFS live) |
+| GPU clock during these runs | not measured (no run had >=2 GPU frequency samples) |
+| CPU frequency | - (0/6 cores) |
+| GPU freq (sysfs, informational only) | 625 MHz, cur 625 (devfreq governor nvhost_podgov) |
 | python | 3.8.10 |
 | mediapipe | 0.10.9 |
 | opencv | 5.0.0 |

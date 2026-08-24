@@ -142,6 +142,38 @@ def _measure(cfg: BenchmarkConfig, task, frames, label: str, warmup: int) -> Run
     )
 
 
+def _dvfs_observed(power: Dict[str, Any]) -> Dict[str, Any]:
+    """Did the GPU clock actually change during THIS measured run?
+
+    This replaces every pre-run guess at whether jetson_clocks is active.
+    Three different static probes (devfreq sysfs, governor name, a single
+    jtop sample) were each falsified on the Orin Nano — the clearest case
+    being a jtop sample taken on a fresh reboot, jetson_clocks never run,
+    that read gpu.freq.min == gpu.freq.max simply because the GPU had load
+    at that instant. A snapshot cannot tell "pinned" from "busy" apart.
+
+    What can: sampling gpu_freq_khz for the whole duration of the actual
+    benchmark loop and checking whether it varied. That is a fact about the
+    run that produced these numbers, not an inference about the system
+    state before it, so it needs no falsifiable heuristic.
+    """
+    gpu_freq = power.get("gpu_freq_khz")
+    if not gpu_freq or gpu_freq.get("count", 0) < 2:
+        return {"conclusive": False,
+                "reason": "fewer than 2 GPU frequency samples during the run"}
+    lo, hi = gpu_freq.get("min"), gpu_freq.get("max")
+    scaled = lo != hi
+    result = {"conclusive": True, "scaled": scaled, "min_khz": lo, "max_khz": hi,
+              "samples": gpu_freq["count"]}
+    result["note"] = (
+        f"GPU frequency varied {lo:.0f}-{hi:.0f} kHz during this run — DVFS was live"
+        if scaled else
+        f"GPU frequency held steady at {hi:.0f} kHz for all {gpu_freq['count']} "
+        "samples during this run"
+    )
+    return result
+
+
 def _energy(power: Dict[str, Any], wall_s: float, iterations: int,
             throughput_fps: float) -> Dict[str, Any]:
     """Energy per frame and efficiency, from average total-rail power.
@@ -324,6 +356,7 @@ def _measure_live(cfg: BenchmarkConfig, task, camera, label: str, warmup: int,
         detections=summarize(detections),
         power=power,
         energy=_energy(power, wall_s, cfg.run.iterations, throughput),
+        dvfs=_dvfs_observed(power),
         live=_diagnose(baseline, stage_summary, throughput, skipped_total),
         raw_latencies_ms=totals if cfg.output.save_raw_latencies else None,
         raw_samples=raw_samples or None,
