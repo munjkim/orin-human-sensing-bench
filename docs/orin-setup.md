@@ -55,25 +55,74 @@ pip install '.[dev]'
 
 ## 2. MediaPipe
 
-`pip install mediapipe` may or may not resolve an aarch64 wheel for your
-Python version. Check first:
+**On this board, install exactly this:**
 
 ```bash
-pip download mediapipe --no-deps -d /tmp/mpcheck
+pip install 'mediapipe==0.10.9'
 ```
 
-If there is no wheel, the usual paths are a community aarch64 build or
-building from source. Confirm whichever you land on:
+Or via the extra, which encodes the same constraint:
+
+```bash
+pip install -e '.[mediapipe]'
+```
+
+~112 MB of wheels, all prebuilt — nothing compiles.
+
+### Why the version is pinned rather than lower-bounded
+
+Three facts about what PyPI actually publishes for `linux aarch64`:
+
+| release | aarch64 wheel | works on Python 3.8? |
+|---|---|---|
+| 0.10.5 – 0.10.9 | `cp38-cp38-manylinux_2_17_aarch64` | **yes** |
+| 0.10.13 – 0.10.18 | cp39/310/311/312 only | no — cp38 tag was dropped |
+| 1.0.x | `py3-none-manylinux_2_28_aarch64` | installs, then fails |
+
+That last row is the trap. The `py3-none` tag claims any Python 3, and
+`manylinux_2_28` needs glibc ≥ 2.28 which Ubuntu 20.04 satisfies (2.31) — so
+`pip install mediapipe` on this board resolves to **1.0.1**, installs
+cleanly, and only fails when you import it. `mediapipe>=0.10.9` has the same
+problem. Pin it.
+
+`0.10.9` is the last release with a real cp38 aarch64 wheel, and it has the
+lighter dependency set: 0.10.13+ pulls in `jax` and `jaxlib`, which you do
+not want on a 6.3 GB shared-memory board.
+
+### What comes with it
+
+`mediapipe` depends on `opencv-contrib-python`, which resolves to a
+prebuilt `cp37-abi3` aarch64 wheel (4.8.1.78) — no source build. Because the
+venv uses `--system-site-packages`, this pip build **shadows JetPack's system
+OpenCV 4.5.4** inside the venv. For this harness that is fine: capture uses
+`cv2.CAP_V4L2`, colour conversion and resize, all of which the pip wheel
+supports.
+
+Be aware of what the pip wheel does *not* have, in case you extend this
+later: no CUDA, and no GStreamer. A CSI camera via `nvarguscamerasrc` needs
+JetPack's OpenCV, so that path would require `--no-deps` and keeping the
+system build:
+
+```bash
+pip install --no-deps 'mediapipe==0.10.9'
+pip install protobuf==3.20.3 absl-py attrs flatbuffers matplotlib sounddevice
+```
+
+USB UVC cameras — what this repo benchmarks — do not need that.
+
+### Confirm it
 
 ```bash
 ohsb doctor        # reports the mediapipe version it can import
 ```
 
-Note that MediaPipe's GPU delegate on Jetson runs through **OpenGL ES
-compute shaders, not CUDA or TensorRT**. `delegate: gpu` is therefore not a
-TensorRT comparison, and on small models it can lose to CPU — the upload,
-shader dispatch and readback can cost more than the inference saves. That
-result is worth measuring, not worth assuming.
+### The GPU delegate is not TensorRT
+
+MediaPipe's GPU delegate on Jetson runs through **OpenGL ES compute shaders,
+not CUDA or TensorRT**. `delegate: gpu` is therefore not a TensorRT
+comparison, and on small models it can lose to CPU — the upload, shader
+dispatch and readback can cost more than the inference saves. That result is
+worth measuring, not worth assuming.
 
 ## 3. Put the board in a repeatable state
 
