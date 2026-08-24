@@ -16,6 +16,7 @@ from __future__ import annotations
 import threading
 import time
 from collections import defaultdict
+from collections.abc import Mapping
 from typing import Any, Dict, List, Optional
 
 from ..metrics import summarize
@@ -35,10 +36,32 @@ def _as_float(value: Any) -> Optional[float]:
     return None
 
 
+def as_mapping(value: Any) -> Dict[str, Any]:
+    """Return a plain dict for anything dict-like, else {}.
+
+    Not every jtop field is a real ``dict``. On the Orin Nano running
+    jetson-stats 7.x, ``power``, ``cpu`` and ``temperature`` come back as
+    dicts but ``gpu`` and ``memory`` are custom mapping types whose repr
+    merely looks like one. An ``isinstance(x, dict)`` guard silently drops
+    them, which cost us GPU utilisation, GPU frequency and RAM in every run
+    until a `doctor --dump-jtop` from the board showed it.
+    """
+    if isinstance(value, dict):
+        return value
+    if isinstance(value, Mapping):
+        return dict(value)
+    keys = getattr(value, "keys", None)
+    if callable(keys) and hasattr(value, "__getitem__"):
+        try:
+            return {k: value[k] for k in keys()}
+        except Exception:
+            return {}
+    return {}
+
+
 def _dig(node: Any, *keys: str) -> Any:
     """Return the first present key from a mapping, else None."""
-    if not isinstance(node, dict):
-        return None
+    node = as_mapping(node)
     for key in keys:
         if key in node:
             return node[key]
@@ -56,8 +79,12 @@ def extract_power_mw(power: Any) -> Dict[str, float]:
     if not isinstance(power, dict):
         return {}
 
-    rails = _dig(power, "rail", "rails")
-    container = rails if isinstance(rails, dict) else power
+    power = as_mapping(power)
+    if not power:
+        return {}
+
+    rails = as_mapping(_dig(power, "rail", "rails"))
+    container = rails or power
 
     out: Dict[str, float] = {}
     for name, entry in container.items():
@@ -69,42 +96,54 @@ def extract_power_mw(power: Any) -> Dict[str, float]:
         if value is not None:
             out[str(name)] = value
 
+    # The module input rail lives under `tot`, not in `rail` — on the Orin
+    # Nano `rail` holds only VDD_CPU_GPU_CV and VDD_SOC. `tot.name` carries
+    # the real rail name (VDD_IN here), so use it rather than inventing one:
+    # a result that says "TOTAL" cannot be compared against a tegrastats run
+    # that says "VDD_IN".
     total = _dig(power, "tot", "total")
+    total_map = as_mapping(total)
     total_mw = _as_float(total)
     if total_mw is None:
-        total_mw = _as_float(_dig(total, "power", "curr", "cur", "inst"))
+        total_mw = _as_float(_dig(total_map, "power", "curr", "cur", "inst"))
     if total_mw is not None:
-        out.setdefault("TOTAL", total_mw)
+        out.setdefault(str(total_map.get("name") or "TOTAL"), total_mw)
     return out
 
 
 def extract_gpu(gpu: Any) -> Dict[str, float]:
     """Return ``{"load_pct": ..., "freq_khz": ...}`` from jtop's gpu payload."""
     out: Dict[str, float] = {}
-    if not isinstance(gpu, dict):
+    gpu = as_mapping(gpu)
+    if not gpu:
         return out
     # Either {"ga10b": {...}} (device-keyed) or the inner dict directly.
-    nested = bool(gpu) and all(isinstance(v, dict) for v in gpu.values())
-    candidates = list(gpu.values()) if nested else []
-    for node in [gpu, *candidates]:
-        if not isinstance(node, dict):
-            continue
-        status = _dig(node, "status") or node
+    candidates = [as_mapping(v) for v in gpu.values()]
+    for node in [gpu, *[c for c in candidates if c]]:
+        status = as_mapping(_dig(node, "status")) or node
         load = _as_float(_dig(status, "load", "val", "gpu"))
         if load is not None and "load_pct" not in out:
             out["load_pct"] = load
         freq = _dig(node, "freq")
-        cur = _as_float(_dig(freq, "cur", "current")) if isinstance(freq, dict) else _as_float(freq)
+        freq_map = as_mapping(freq)
+        cur = _as_float(_dig(freq_map, "cur", "current")) if freq_map else _as_float(freq)
         if cur is not None and "freq_khz" not in out:
             out["freq_khz"] = cur
+        # The authoritative DVFS flag: True means the GPU is still scaling,
+        # i.e. jetson_clocks has not pinned it.
+        scaling = _dig(status, "3d_scaling")
+        if isinstance(scaling, bool) and "scaling_3d" not in out:
+            out["scaling_3d"] = float(scaling)
     return out
 
 
 def extract_cpu_pct(cpu: Any) -> Optional[float]:
-    if not isinstance(cpu, dict):
+    cpu = as_mapping(cpu)
+    if not cpu:
         return None
     total = _dig(cpu, "total")
-    if isinstance(total, dict):
+    if as_mapping(total):
+        total = as_mapping(total)
         idle = _as_float(_dig(total, "idle"))
         if idle is not None:
             return max(0.0, 100.0 - idle)
@@ -116,8 +155,8 @@ def extract_cpu_pct(cpu: Any) -> Optional[float]:
 
 
 def extract_ram_mb(memory: Any) -> Optional[float]:
-    ram = _dig(memory, "RAM", "ram") if isinstance(memory, dict) else None
-    used = _as_float(_dig(ram, "used")) if isinstance(ram, dict) else None
+    ram = as_mapping(_dig(memory, "RAM", "ram"))
+    used = _as_float(_dig(ram, "used")) if ram else None
     if used is None:
         return None
     # jtop reports RAM in kB.
@@ -126,12 +165,12 @@ def extract_ram_mb(memory: Any) -> Optional[float]:
 
 def extract_temps(temperature: Any) -> Dict[str, float]:
     out: Dict[str, float] = {}
-    if not isinstance(temperature, dict):
-        return out
-    for name, entry in temperature.items():
+    for name, entry in as_mapping(temperature).items():
         value = _as_float(entry)
         if value is None:
-            if isinstance(entry, dict) and entry.get("online") is False:
+            # Offline sensors report -256.0; recording that as a temperature
+            # would drag every summary's min into nonsense.
+            if as_mapping(entry).get("online") is False:
                 continue
             value = _as_float(_dig(entry, "temp", "value"))
         if value is not None:
@@ -293,8 +332,11 @@ def total_rail(rails) -> str:
 
 def _plain(value: Any) -> Any:
     """Best-effort conversion of a jtop payload to JSON-safe primitives."""
-    if isinstance(value, dict):
-        return {str(k): _plain(v) for k, v in value.items()}
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    mapping = as_mapping(value)
+    if mapping:
+        return {str(k): _plain(v) for k, v in mapping.items()}
     if isinstance(value, (list, tuple)):
         return [_plain(v) for v in value]
     if isinstance(value, (str, int, float, bool)) or value is None:

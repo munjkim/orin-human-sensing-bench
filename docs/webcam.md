@@ -23,19 +23,37 @@ sudo apt install v4l-utils     # for the authoritative list
 ohsb cameras
 ```
 
+Real output from a Logitech C920 on the Orin Nano:
+
 ```
-/dev/video0  USB 2.0 Camera  (via v4l2-ctl)
-  format     resolution     fps   note
-  MJPG        1280x720     30.0   compressed
-  MJPG         640x480     30.0   compressed
-  YUYV        1280x720     10.0
-  YUYV         640x480     30.0
+/dev/video0  HD Pro Webcam C920  (via v4l2-ctl)
+  30 fps ceiling:  H264 1920x1080  |  MJPG 1920x1080  |  YUYV 800x448
+  336 modes -> 53 (max fps per resolution)
+  format     resolution  max fps   note
+  MJPG      1920x1080      30.0   compressed
+  MJPG      1280x720       30.0   compressed
+  MJPG       640x480       30.0   compressed
+  YUYV      1920x1080       5.0
+  YUYV      1280x720       10.0
+  YUYV       800x448       30.0
+  ...
+
+/dev/video1  HD Pro Webcam C920  (via v4l2-ctl)
+  metadata node, not a capture device — this is normal
 ```
 
-**That table is usually the whole story for a cheap webcam.** Same 720p
-frame: 30 fps compressed, 10 fps raw. USB 2.0 has roughly 480 Mbit/s of
-which a UVC device gets ~300; raw YUYV at 1280x720x16bpp x 30 fps needs
-~440 Mbit/s, so the camera simply refuses and offers 10 fps instead.
+**The `30 fps ceiling` line is the whole story.** Same 1080p frame: 30 fps
+compressed, 5 fps raw. USB 2.0 gives a UVC device roughly 300 Mbit/s of
+usable bandwidth; raw YUYV at 1920x1080x16bpp x 30 fps needs ~1 Gbit/s, so
+the camera does not refuse — it quietly offers 5 fps instead.
+
+A camera exposing a second `/dev/video*` node with no formats is normal:
+UVC devices commonly claim one node for frames and one for per-frame
+metadata.
+
+The listing is collapsed to the fps ceiling per resolution on purpose. A
+C920 advertises 336 format/size/rate combinations, and nothing is learned
+from seeing 1080p at 30, 24, 20, 15, 10, 7.5 and 5 fps.
 
 MJPG buys the bandwidth back at the cost of JPEG decode on the CPU — and on
 this board that decode competes with MediaPipe for the same six A78AE

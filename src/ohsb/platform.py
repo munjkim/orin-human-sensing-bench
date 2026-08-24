@@ -85,15 +85,27 @@ def power_mode() -> Dict[str, Any]:
 
 
 def _jetson_clocks_active(show_output: Optional[str]) -> Optional[bool]:
-    """True when the GPU is pinned at its max frequency.
+    """True when the GPU devfreq rail is pinned rather than scaling.
 
-    ``jetson_clocks`` has no status flag on L4T 35, so we infer it the way
-    the tool itself does: min == max on the GPU devfreq rail.
+    ``jetson_clocks`` has no status flag on L4T 35, so this has to be
+    inferred — and the obvious inference is wrong on this hardware.
+
+    Measured on an Orin Nano dev kit (L4T 35.3.1), with jetson_clocks never
+    run and DVFS fully active::
+
+        /sys/class/devfreq/17000000.ga10b/min_freq  624750000
+        /sys/class/devfreq/17000000.ga10b/max_freq  624750000
+        /sys/class/devfreq/17000000.ga10b/cur_freq  624750000
+        jtop: freq {min: 306000, max: 624750, cur: 306000}, 3d_scaling: True
+
+    So ``min == max`` reads as "pinned" while the GPU is idling at 306 MHz.
+    The governor is what actually changes: jetson_clocks switches the devfreq
+    governor to ``userspace`` and holds the frequency there, whereas the
+    scaling default is ``nvhost_podgov``.
     """
-    gpu = gpu_freq()
-    lo, hi = gpu.get("min_freq_hz"), gpu.get("max_freq_hz")
-    if lo is not None and hi is not None:
-        return lo == hi
+    governor = gpu_freq().get("governor")
+    if governor:
+        return governor == "userspace"
     if show_output:
         match = re.search(r"GPU MinFreq=(\d+)\s+MaxFreq=(\d+)", show_output)
         if match:
@@ -242,13 +254,15 @@ def reproducibility_warnings(snap: Optional[Dict[str, Any]] = None) -> List[str]
         warnings.append("not running on a Jetson — power data will be unavailable")
         return warnings
 
+    gpu = snap.get("gpu", {})
     if snap["power_mode"].get("jetson_clocks_active") is False:
         warnings.append(
-            "jetson_clocks is inactive: GPU/CPU frequencies will scale during the run. "
-            "Run `sudo jetson_clocks` to pin them before collecting comparable numbers."
+            f"jetson_clocks is inactive (GPU devfreq governor is "
+            f"{gpu.get('governor', 'unknown')!r}, so DVFS is live): GPU and CPU "
+            "frequencies will scale during the run. Run `sudo jetson_clocks` to pin "
+            "them before collecting comparable numbers."
         )
-    gpu = snap.get("gpu", {})
-    if gpu.get("governor") and gpu.get("governor") != "userspace":
+    elif gpu.get("governor") and gpu["governor"] != "userspace":
         warnings.append(
             f"GPU devfreq governor is {gpu['governor']!r} (DVFS active); "
             "frequency will vary with load"

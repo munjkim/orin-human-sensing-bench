@@ -10,7 +10,9 @@
 #   ./scripts/camera_matrix.sh "640x480 1280x720" "cpu gpu"
 set -euo pipefail
 
-RESOLUTIONS="${1:-640x480 1280x720}"
+# Defaults chosen from a real C920: MJPG reaches 30 fps at every one of
+# these, so the camera is not the variable — the Orin is.
+RESOLUTIONS="${1:-640x480 1280x720 1920x1080}"
 DELEGATES="${2:-cpu gpu}"
 CONFIGS="${3:-configs/webcam_face_detect.yaml configs/webcam_face.yaml configs/webcam_pose.yaml}"
 OUT="results/camera-matrix-$(date +%Y%m%d-%H%M%S)"
