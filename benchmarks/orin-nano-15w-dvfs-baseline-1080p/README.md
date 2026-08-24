@@ -1,9 +1,11 @@
 | run | task | delegate | resolution | p50 ms | p95 ms | fps | camera fps | W | mJ/frame | bottleneck |
 |---|---|---|---|---:|---:|---:|---:|---:|---:|---|
-| `noop-dvfs` | noop | cpu | 1280x720 | 0.00 | 0.00 | 414578.9 | - | 6.81 | 0.0 | - |
+| `noop-dvfs` | noop | cpu | n/a | 0.00 | 0.00 | 414578.9 | - | 6.81 | 0.0 | harness floor |
 | `face-detect-1080p-dvfs` | face_detector | cpu | 1920x1080 | 32.33 | 36.84 | 29.7 | 29.0 | 6.46 | 217.3 | CAMERA-BOUND |
 | `face-mesh-1080p-dvfs` | face_landmarker | cpu | 1920x1080 | 49.84 | 53.94 | 19.7 | 30.0 | 6.34 | 322.5 | BALANCED |
 | `pose-lite-1080p-dvfs` | pose_landmarker | cpu | 1920x1080 | 55.69 | 61.42 | 17.5 | 30.0 | 6.70 | 382.7 | COMPUTE-BOUND |
+
+*`n/a` rows are the `noop` harness-calibration task: no camera, no model, synthetic frames only. It measures what the benchmark loop itself costs so every other row can be read against that floor — its resolution and bottleneck verdict are not comparable to a camera run's.*
 
 ## Board state
 
