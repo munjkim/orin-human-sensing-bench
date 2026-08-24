@@ -59,6 +59,9 @@ done
 capture uname.txt           uname -a
 capture nvpmodel.txt        nvpmodel -q
 capture jetson-clocks.txt   jetson_clocks --show
+# Every candidate signal for "are clocks pinned", side by side. Inferring
+# this from any single source has already been wrong twice on this board.
+capture clocks-diagnostic.txt bash "$ROOT/scripts/diagnose_clocks.sh"
 capture meminfo.txt         free -h
 capture lsusb.txt           lsusb
 capture pip-freeze.txt      python3 -m pip freeze
