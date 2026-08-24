@@ -5,7 +5,14 @@ from __future__ import annotations
 from ..sources.base import Frame
 from . import register
 from .base import InferResult, Task
-from .mediapipe_common import base_options, import_mediapipe, running_mode, take, to_mp_image
+from .mediapipe_common import (
+    base_options,
+    create_from_options,
+    import_mediapipe,
+    running_mode,
+    take,
+    to_mp_image,
+)
 
 
 @register("pose_landmarker")
@@ -29,7 +36,7 @@ class PoseLandmarkerTask(Task):
             min_tracking_confidence=take(opts, "min_tracking_confidence", 0.5),
             output_segmentation_masks=take(opts, "output_segmentation_masks", False),
         )
-        self._landmarker = vision.PoseLandmarker.create_from_options(options)
+        self._landmarker = create_from_options(vision.PoseLandmarker, options, self.cfg)
 
     def infer(self, frame: Frame) -> InferResult:
         image = to_mp_image(frame.image)
