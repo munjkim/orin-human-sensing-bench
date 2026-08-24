@@ -254,13 +254,19 @@ def _report_rows(paths: List[Path]):
         for run in data.get("runs", []):
             lat = run.get("latency_ms", {})
             live = run.get("live", {})
+            is_noop = task.get("type") == "noop"
             rows.append({
                 "name": run.get("name", "?"),
                 "mode": data.get("mode", "offline"),
                 "task": task.get("type"),
                 "delegate": task.get("delegate"),
                 "model": Path(str(task.get("model") or "-")).name,
-                "res": f"{source.get('width', '?')}x{source.get('height', '?')}",
+                # noop touches no real pixels (synthetic source, no model) —
+                # its resolution is not comparable to a camera run's, so the
+                # table marks it n/a; markdown output adds a footnote.
+                "res": ("n/a" if is_noop
+                       else f"{source.get('width', '?')}x{source.get('height', '?')}"),
+                "is_noop": is_noop,
                 "p50": lat.get("p50", float("nan")),
                 "p95": lat.get("p95", float("nan")),
                 "fps": run.get("throughput_fps", float("nan")),
@@ -268,7 +274,8 @@ def _report_rows(paths: List[Path]):
                 "cam": live.get("camera_baseline_fps", float("nan")),
                 "watts": run.get("energy", {}).get("avg_power_w", float("nan")),
                 "mj": run.get("energy", {}).get("mj_per_frame", float("nan")),
-                "bottleneck": (live.get("verdict", "").split(" ")[0].strip("—") or "-"),
+                "bottleneck": ("harness floor" if is_noop else
+                              (live.get("verdict", "").split(" ")[0].strip("—") or "-")),
                 "dvfs": run.get("dvfs", {}),
                 "platform": data.get("platform", {}),
                 "warnings": data.get("warnings", []),
@@ -312,6 +319,15 @@ def _render_markdown(rows) -> str:
             f"| {_num(r['cam'], '.1f')} | {_num(r['watts'])} | {_num(r['mj'], '.1f')} "
             f"| {r['bottleneck']} |"
         )
+
+    if any(r.get("is_noop") for r in rows):
+        lines += [
+            "",
+            "*`n/a` rows are the `noop` harness-calibration task: no camera, no model, "
+            "synthetic frames only. It measures what the benchmark loop itself costs "
+            "so every other row can be read against that floor — its resolution and "
+            "bottleneck verdict are not comparable to a camera run's.*",
+        ]
 
     snap = rows[0]["platform"] if rows else {}
     board = snap.get("board", {})
