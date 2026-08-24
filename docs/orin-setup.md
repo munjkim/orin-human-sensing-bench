@@ -138,7 +138,25 @@ ohsb doctor --dump-jtop > docs/jtop-schema-observed.json
 If a rail or the GPU load is missing from a run's output, that dump is what
 tells you which key moved.
 
-## 5. Sanity check before trusting anything
+## 5. Model bundles
+
+```bash
+./scripts/fetch_models.sh
+```
+
+~53 MB across six bundles. JetPack images do not always ship `curl`; the
+script uses `wget` when curl is absent and tells you what to install if
+neither is there. To fetch them by hand instead:
+
+```bash
+./scripts/fetch_models.sh --print-urls
+```
+
+Downloads are verified by size — a rotated URL can return an HTML error page
+with a 200 status, and a 2 kB "model" that fails at load time is far worse
+than a failed download.
+
+## 6. Sanity check before trusting anything
 
 ```bash
 ohsb run -c configs/noop.yaml           # harness floor, no model

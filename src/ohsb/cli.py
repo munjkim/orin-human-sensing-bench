@@ -209,7 +209,8 @@ def cmd_doctor(args) -> int:
 
     print("checks:")
     for label, ok, detail in checks:
-        print(f"  [{'ok' if ok else 'FAIL'}] {label:<24} {detail}")
+        status = "ok" if ok else "FAIL"
+        print(f"  [{status:<4}] {label:<24} {detail}")
     if models:
         for model in models:
             print(f"        - {model.name}")
