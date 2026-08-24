@@ -57,6 +57,7 @@ For the webcam workflow — USB bandwidth, MJPG vs YUYV, stale frames — see
 | `ohsb cameras` | connected cameras and the modes they really support |
 | `ohsb list` | registered tasks, sources, power backends, configs |
 | `ohsb doctor` | board state, prerequisites, reproducibility warnings |
+| `ohsb doctor --json` | the same, machine-readable |
 | `ohsb doctor --dump-jtop` | raw jtop payload, to pin the power extractors |
 | `ohsb report <files/dirs>` | compare stored results as one table |
 | `ohsb report --markdown -o F` | generate a committable summary with the board state |
@@ -92,6 +93,22 @@ embedding dominates, and how that flips as the face count rises.
 Always read a real result against `configs/noop.yaml`. It is the cost of the
 measurement loop itself; if a task's latency approaches it, the number is
 harness overhead, not inference.
+
+## Sharing board state
+
+Copying terminal output by hand gets old fast. One command captures
+everything needed to diagnose a board — doctor, camera modes, raw
+`v4l2-ctl`, jtop schema, clock state, `pip freeze` — into a committable
+directory:
+
+```bash
+./scripts/collect_env.sh
+git add env && git commit -m "Add board environment snapshot" && git push
+```
+
+Each probe's failure is recorded in its own file rather than aborting the
+sweep, so a board missing `v4l-utils` or `jetson-stats` still produces a
+usable bundle. See [`env/`](env/).
 
 ## Live mode: attributing the bottleneck
 
@@ -172,8 +189,10 @@ src/ohsb/
   monitors/      jtop (preferred) | tegrastats (fallback)
   metrics/       latency/percentile aggregation
 configs/         one YAML per benchmark
-scripts/         fetch_models | setup_orin | sweep | camera_matrix | publish_results
+scripts/         fetch_models | setup_orin | sweep | camera_matrix
+                 publish_results | collect_env
 benchmarks/      committed measurement records (results/ is scratch)
+env/             committed board environment snapshots
 docs/            board setup and gotchas
 ```
 
