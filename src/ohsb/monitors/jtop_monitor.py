@@ -13,7 +13,8 @@ structure so the mapping can be pinned against the actual board.
 
 from __future__ import annotations
 
-import threading
+import multiprocessing as mp
+import queue as queue_module
 import time
 from collections import defaultdict
 from collections.abc import Mapping
@@ -192,18 +193,71 @@ def extract_temps(temperature: Any) -> Dict[str, float]:
     return out
 
 
+def _snapshot(board, t_start: float) -> Dict[str, Any]:
+    power = getattr(board, "power", None)
+    sample: Dict[str, Any] = {
+        "t": time.perf_counter() - t_start,
+        "power_mw": extract_power_mw(power),
+        "temp_c": extract_temps(getattr(board, "temperature", None)),
+    }
+    gpu_info = extract_gpu(getattr(board, "gpu", None))
+    if "load_pct" in gpu_info:
+        sample["gpu_util_pct"] = gpu_info["load_pct"]
+    if "freq_khz" in gpu_info:
+        sample["gpu_freq_khz"] = gpu_info["freq_khz"]
+    cpu_pct = extract_cpu_pct(getattr(board, "cpu", None))
+    if cpu_pct is not None:
+        sample["cpu_util_pct"] = cpu_pct
+    ram = extract_ram_mb(getattr(board, "memory", None))
+    if ram is not None:
+        sample["ram_used_mb"] = ram
+    return sample
+
+
+def _sampling_process(interval_ms: float, out_queue: mp.Queue, stop_event) -> None:
+    """Runs in its own OS process — this is why it exists.
+
+    A background *thread* sampling jtop was tried first and measured, on the
+    real board, collecting exactly 1 sample over a 10-second live run at a
+    100 ms interval instead of the ~100 expected. A synthetic reproduction
+    with a pure-Python busy loop did *not* starve a sibling thread this
+    badly (CPython yields the GIL between bytecode instructions on its own
+    switch interval), so the precise culprit inside the live loop —
+    plausibly a camera-capture or MediaPipe C call that holds the GIL for an
+    extended stretch — was not pinned down further. What is certain: an OS
+    process has no GIL dependency at all, so this sidesteps the failure mode
+    regardless of its exact mechanism.
+    """
+    try:
+        from jtop import jtop as JtopClient
+    except Exception:
+        return
+    t_start = time.perf_counter()
+    try:
+        with JtopClient(interval=interval_ms / 1000.0) as board:
+            while board.ok() and not stop_event.is_set():
+                try:
+                    out_queue.put_nowait(_snapshot(board, t_start))
+                except Exception:
+                    # A full queue must not crash sampling; a dropped sample
+                    # costs far less than losing the rest of the run.
+                    pass
+    except Exception:
+        return
+
+
 class JtopMonitor(Monitor):
     name = "jtop"
 
     def __init__(self, cfg):
         self.cfg = cfg
-        self._thread = None
-        self._stop = threading.Event()
+        self._process: Optional[mp.Process] = None
+        self._queue: Optional[mp.Queue] = None
+        self._stop_event = None
         self._samples: List[Dict[str, Any]] = []
         self._error = ""
         self._t_start = 0.0
         self._t_stop = 0.0
-        self._raw_first: Dict[str, Any] = {}
 
     @staticmethod
     def is_available() -> bool:
@@ -218,64 +272,48 @@ class JtopMonitor(Monitor):
             self._error = _IMPORT_HINT
             return
         self._t_start = time.perf_counter()
-        self._thread = threading.Thread(target=self._pump, name="jtop", daemon=True)
-        self._thread.start()
+        self._queue = mp.Queue()
+        self._stop_event = mp.Event()
+        self._process = mp.Process(
+            target=_sampling_process,
+            args=(float(self.cfg.interval_ms), self._queue, self._stop_event),
+            daemon=True,
+        )
+        self._process.start()
         # Give the daemon a moment to hand over the first payload so a short
         # run does not report zero samples.
         deadline = time.perf_counter() + 2.0
-        while not self._samples and not self._error and time.perf_counter() < deadline:
+        while self._queue.empty() and time.perf_counter() < deadline:
+            if not self._process.is_alive():
+                break
             time.sleep(0.02)
-
-    def _pump(self) -> None:
-        try:
-            from jtop import jtop as JtopClient
-        except Exception as exc:  # pragma: no cover - guarded by is_available
-            self._error = f"{_IMPORT_HINT} ({exc})"
-            return
-        try:
-            with JtopClient(interval=self.cfg.interval_ms / 1000.0) as board:
-                while board.ok() and not self._stop.is_set():
-                    self._samples.append(self._snapshot(board))
-        except Exception as exc:
-            # A dead jtop.service must degrade the result, never kill the run.
-            if not self._error:
-                self._error = f"jtop sampling failed: {type(exc).__name__}: {exc}"
-
-    def _snapshot(self, board) -> Dict[str, Any]:
-        power = getattr(board, "power", None)
-        gpu = getattr(board, "gpu", None)
-        if not self._raw_first:
-            self._raw_first = {
-                "power": _plain(power),
-                "gpu": _plain(gpu),
-                "cpu": _plain(getattr(board, "cpu", None)),
-                "memory": _plain(getattr(board, "memory", None)),
-                "temperature": _plain(getattr(board, "temperature", None)),
-            }
-        sample: Dict[str, Any] = {
-            "t": time.perf_counter() - self._t_start,
-            "power_mw": extract_power_mw(power),
-            "temp_c": extract_temps(getattr(board, "temperature", None)),
-        }
-        gpu_info = extract_gpu(gpu)
-        if "load_pct" in gpu_info:
-            sample["gpu_util_pct"] = gpu_info["load_pct"]
-        if "freq_khz" in gpu_info:
-            sample["gpu_freq_khz"] = gpu_info["freq_khz"]
-        cpu_pct = extract_cpu_pct(getattr(board, "cpu", None))
-        if cpu_pct is not None:
-            sample["cpu_util_pct"] = cpu_pct
-        ram = extract_ram_mb(getattr(board, "memory", None))
-        if ram is not None:
-            sample["ram_used_mb"] = ram
-        return sample
 
     def stop(self) -> None:
         self._t_stop = time.perf_counter()
-        self._stop.set()
-        if self._thread is not None:
-            self._thread.join(timeout=5)
-            self._thread = None
+        if self._stop_event is not None:
+            self._stop_event.set()
+        if self._process is not None:
+            self._process.join(timeout=5)
+            if self._process.is_alive():  # pragma: no cover - defensive
+                self._process.terminate()
+                self._process.join(timeout=2)
+            self._process = None
+        self._drain_queue()
+
+    def _drain_queue(self) -> None:
+        if self._queue is None:
+            return
+        while True:
+            try:
+                self._samples.append(self._queue.get_nowait())
+            except queue_module.Empty:
+                break
+            except Exception:  # pragma: no cover - defensive
+                break
+        self._queue.close()
+        self._queue = None
+        if not self._samples and not self._error:
+            self._error = "no samples collected (jtop process produced none)"
 
     @property
     def duration_s(self) -> float:
@@ -329,7 +367,7 @@ class JtopMonitor(Monitor):
         return out
 
     def samples(self) -> Dict[str, Any]:
-        return {"jtop": self._samples, "jtop_raw_first_sample": self._raw_first}
+        return {"jtop": self._samples}
 
 
 #: Rails representing total module input power, most specific first.
@@ -379,27 +417,3 @@ def dump_schema() -> Dict[str, Any]:
             }
     except Exception as exc:
         return {"available": False, "reason": f"{type(exc).__name__}: {exc}"}
-
-
-def quick_gpu_state() -> Optional[Dict[str, float]]:
-    """One fast jtop sample of GPU frequency state.
-
-    Used to decide whether jetson_clocks has pinned the GPU. Returns None on
-    any failure — jtop not installed, the daemon not running, the read
-    timing out — so the caller can report "unknown" rather than guessing.
-    That distinction mattered here: this project previously inferred pinning
-    from /sys/class/devfreq, which reads identically whether the GPU is
-    pinned or scaling on this hardware, and the false "pinned" reading
-    suppressed the single most important reproducibility warning.
-    """
-    try:
-        from jtop import jtop as JtopClient
-    except Exception:
-        return None
-    try:
-        with JtopClient(interval=0.2) as board:
-            if not board.ok():
-                return None
-            return extract_gpu(getattr(board, "gpu", None))
-    except Exception:
-        return None
