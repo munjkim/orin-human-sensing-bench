@@ -12,7 +12,9 @@ build/
 models/*
 !models/.gitkeep
 
-# Benchmark output
+# Scratch benchmark output — every run lands here, most are throwaway.
+# Runs worth keeping are promoted to benchmarks/ (committed) via
+# scripts/publish_results.sh.
 results/*
 !results/.gitkeep
 
