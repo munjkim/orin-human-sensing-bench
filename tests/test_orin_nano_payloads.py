@@ -269,3 +269,34 @@ def test_busy_but_unpinned_gpu_collapses_min_max_just_like_pinned():
     assert busy["freq_min_khz"] == busy["freq_max_khz"] == 624750
     assert pinned["freq_min_khz"] == pinned["freq_max_khz"] == 624750
     # Only the load differs, and load is not part of the pin decision.
+
+
+# -- power sampling: thread starvation on the live path -------------------
+#
+# Confirmed on the board: a background *thread* running jtop's sampling
+# loop collected exactly 1 sample over a ~10s live benchmark run at a
+# 100ms interval, instead of the ~100 expected — every published power/
+# energy number up to that point was effectively a single instantaneous
+# reading, not a time average. JtopMonitor now samples in a separate OS
+# process instead, which cannot be starved by the benchmarked process's
+# GIL usage regardless of its exact cause.
+
+def test_jtop_monitor_uses_a_process_not_a_thread():
+    from ohsb.monitors.jtop_monitor import JtopMonitor
+
+    assert not hasattr(JtopMonitor, "_pump"), (
+        "sampling must not be a background thread method — that was the "
+        "starved design; see _sampling_process for the replacement"
+    )
+
+
+def test_unavailable_jtop_reports_cleanly_without_spawning_anything():
+    from ohsb.config import PowerConfig
+    from ohsb.monitors.jtop_monitor import JtopMonitor
+
+    monitor = JtopMonitor(PowerConfig())
+    monitor.start()  # jtop is not installed in the test environment
+    monitor.stop()
+    summary = monitor.summary()
+    assert summary["available"] is False
+    assert summary["backend"] == "jtop"
