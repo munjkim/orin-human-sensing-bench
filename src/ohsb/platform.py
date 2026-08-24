@@ -85,30 +85,41 @@ def power_mode() -> Dict[str, Any]:
 
 
 def _jetson_clocks_active(show_output: Optional[str]) -> Optional[bool]:
-    """True when the GPU devfreq rail is pinned rather than scaling.
+    """True when the GPU's operating frequency range has collapsed to a point.
 
-    ``jetson_clocks`` has no status flag on L4T 35, so this has to be
-    inferred — and the obvious inference is wrong on this hardware.
+    ``jetson_clocks`` has no status flag on L4T 35, and on this hardware two
+    other obvious signals are both dead ends:
 
-    Measured on an Orin Nano dev kit (L4T 35.3.1), with jetson_clocks never
-    run and DVFS fully active::
+    * ``/sys/class/devfreq/17000000.ga10b/{min_freq,max_freq}`` reads
+      624750000/624750000 whether or not the GPU is pinned — confirmed with
+      a before/after capture, so this sysfs pair cannot be used at all.
+    * The devfreq governor never changes name. It stays ``nvhost_podgov``
+      before and after; ``jetson_clocks`` does not switch it to
+      ``userspace`` on this L4T version.
 
-        /sys/class/devfreq/17000000.ga10b/min_freq  624750000
-        /sys/class/devfreq/17000000.ga10b/max_freq  624750000
-        /sys/class/devfreq/17000000.ga10b/cur_freq  624750000
-        jtop: freq {min: 306000, max: 624750, cur: 306000}, 3d_scaling: True
+    What does change, from ``ohsb doctor --dump-jtop`` before and after
+    ``sudo jetson_clocks``::
 
-    So ``min == max`` reads as "pinned" while the GPU is idling at 306 MHz.
-    The governor is what actually changes: jetson_clocks switches the devfreq
-    governor to ``userspace`` and holds the frequency there, whereas the
-    scaling default is ``nvhost_podgov``.
+        before: jtop gpu.freq = {min: 306000, max: 624750, cur: 306000}
+        after:  jtop gpu.freq = {min: 624750, max: 624750, cur: 624750}
+
+    jetson-stats reads nvhost_podgov's own min/max attributes rather than
+    the generic devfreq sysfs, and those genuinely collapse to a point when
+    pinned. jtop is therefore the only reliable source found so far; if it
+    is unavailable this returns None (unknown) instead of guessing again.
     """
-    governor = gpu_freq().get("governor")
-    if governor:
-        return governor == "userspace"
+    from .monitors.jtop_monitor import quick_gpu_state
+
+    state = quick_gpu_state()
+    if state and "freq_min_khz" in state and "freq_max_khz" in state:
+        return state["freq_min_khz"] == state["freq_max_khz"]
     if show_output:
         match = re.search(r"GPU MinFreq=(\d+)\s+MaxFreq=(\d+)", show_output)
         if match:
+            # jetson_clocks --show reflects what it just set, so a single
+            # point here is suggestive, but — unlike a jtop before/after
+            # comparison — it cannot rule out the value being a coincidence
+            # of this board's defaults.
             return match.group(1) == match.group(2)
     return None
 
@@ -145,11 +156,22 @@ def gpu_freq() -> Dict[str, Any]:
 
 
 def cpu_info() -> Dict[str, Any]:
+    """CPU topology and clock state.
+
+    Pinning is judged by ``scaling_min_freq == scaling_max_freq`` per core,
+    not by the governor name: ``jetson_clocks`` on this board pins CPU
+    frequency by collapsing the min/max range while leaving the governor
+    reported as ``schedutil`` (confirmed via ``jetson_clocks --show``:
+    ``Governor=schedutil MinFreq=MaxFreq=CurrentFreq=1510400``). A check
+    against ``governor == "performance"`` would false-negative here exactly
+    the way the GPU governor check did in :func:`_jetson_clocks_active`.
+    """
     out: Dict[str, Any] = {
         "arch": _platform.machine(),
         "logical_cores": os.cpu_count(),
     }
-    governors, max_freqs, online = set(), set(), 0
+    governors, max_freqs, min_freqs = set(), set(), set()
+    online, pinned = 0, 0
     root = Path("/sys/devices/system/cpu")
     if root.is_dir():
         for cpu_dir in sorted(root.glob("cpu[0-9]*")):
@@ -158,17 +180,26 @@ def cpu_info() -> Dict[str, Any]:
                 continue
             online += 1
             gov = _read(str(policy / "scaling_governor"))
+            mn = _read(str(policy / "scaling_min_freq"))
             mx = _read(str(policy / "scaling_max_freq"))
             if gov:
                 governors.add(gov)
             if mx and mx.isdigit():
                 max_freqs.add(int(mx))
+            if mn and mn.isdigit():
+                min_freqs.add(int(mn))
+            if mn and mx and mn == mx:
+                pinned += 1
     if governors:
         out["scaling_governor"] = sorted(governors)
     if max_freqs:
         out["scaling_max_freq_khz"] = sorted(max_freqs)
+    if min_freqs:
+        out["scaling_min_freq_khz"] = sorted(min_freqs)
     if online:
         out["cores_with_cpufreq"] = online
+        out["cores_pinned"] = pinned
+        out["cpu_pinned"] = pinned == online
     return out
 
 
@@ -267,9 +298,14 @@ def reproducibility_warnings(snap: Optional[Dict[str, Any]] = None) -> List[str]
             f"GPU devfreq governor is {gpu['governor']!r} (DVFS active); "
             "frequency will vary with load"
         )
-    govs = snap["cpu"].get("scaling_governor") or []
-    if any(g != "performance" for g in govs):
-        warnings.append(f"CPU scaling governor is {govs}, not 'performance'")
+    cpu = snap.get("cpu", {})
+    if cpu.get("cpu_pinned") is False:
+        warnings.append(
+            f"CPU frequency is not pinned ({cpu.get('cores_pinned', 0)}/"
+            f"{cpu.get('cores_with_cpufreq', 0)} cores at a fixed frequency, "
+            f"governor {cpu.get('scaling_governor')}); `sudo jetson_clocks` pins it "
+            "without necessarily changing the governor name"
+        )
 
     mode = snap["power_mode"].get("nv_power_mode")
     if mode:

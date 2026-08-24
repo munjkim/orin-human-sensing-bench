@@ -316,9 +316,14 @@ def _render_markdown(rows) -> str:
     board = snap.get("board", {})
     mode = snap.get("power_mode", {})
     gpu = snap.get("gpu", {})
+    cpu = snap.get("cpu", {})
     libs = snap.get("libraries", {})
     clocks = mode.get("jetson_clocks_active")
-    clock_state = {True: "pinned", False: "INACTIVE (DVFS live)"}.get(clocks, "-")
+    clock_state = {True: "pinned", False: "INACTIVE (DVFS live)"}.get(clocks, "unknown")
+    cpu_pinned = cpu.get("cpu_pinned")
+    cpu_state = {True: "pinned", False: "not pinned"}.get(cpu_pinned, "-")
+    if cpu.get("cores_with_cpufreq"):
+        cpu_state += f" ({cpu.get('cores_pinned', 0)}/{cpu['cores_with_cpufreq']} cores)"
 
     lines += [
         "",
@@ -329,8 +334,9 @@ def _render_markdown(rows) -> str:
         f"| model | {board.get('model') or '-'} |",
         f"| L4T | {board.get('l4t') or '-'} |",
         f"| power mode | {mode.get('nv_power_mode') or '-'} |",
-        f"| jetson_clocks | {clock_state} |",
-        f"| GPU freq | {_freq(gpu)} |",
+        f"| jetson_clocks (GPU, via jtop) | {clock_state} |",
+        f"| CPU frequency | {cpu_state} |",
+        f"| GPU freq (sysfs, informational only) | {_freq(gpu)} |",
         f"| python | {libs.get('python') or '-'} |",
         f"| mediapipe | {libs.get('mediapipe') or 'not installed'} |",
         f"| opencv | {libs.get('cv2') or 'not installed'} |",
@@ -348,13 +354,14 @@ def _render_markdown(rows) -> str:
 
 
 def _freq(gpu) -> str:
-    """Report the devfreq numbers without judging whether they mean "pinned".
+    """Report the devfreq sysfs numbers labelled as exactly that: informational.
 
-    They do not. On an Orin Nano these read min == max == 624750000 while
-    DVFS is fully live and the GPU idles at 306 MHz, so calling that "pinned"
-    put a claim in the summary that directly contradicted the
-    jetson_clocks row above it. The governor is printed instead, and the
-    pinned/not judgement is left to the row that tracks it.
+    They do not indicate whether the GPU is pinned. On this Orin Nano
+    /sys/class/devfreq/.../{min_freq,max_freq} reads 624750000/624750000
+    whether jetson_clocks has run or not — confirmed with a before/after
+    capture — so this row must never be read as a pinned/not judgement.
+    That call belongs to the "jetson_clocks (GPU, via jtop)" row instead,
+    which uses a source that actually distinguishes the two states.
     """
     lo, hi = gpu.get("min_freq_hz"), gpu.get("max_freq_hz")
     if lo is None or hi is None:

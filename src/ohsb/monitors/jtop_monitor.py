@@ -129,8 +129,22 @@ def extract_gpu(gpu: Any) -> Dict[str, float]:
         cur = _as_float(_dig(freq_map, "cur", "current")) if freq_map else _as_float(freq)
         if cur is not None and "freq_khz" not in out:
             out["freq_khz"] = cur
-        # The authoritative DVFS flag: True means the GPU is still scaling,
-        # i.e. jetson_clocks has not pinned it.
+        if freq_map:
+            # This is the pinned/scaling signal that actually works on this
+            # board: jetson-stats reads nvhost_podgov's own min/max, which
+            # collapse to a point when jetson_clocks pins the GPU. The
+            # generic /sys/class/devfreq/.../{min_freq,max_freq} sysfs files
+            # do not — they read 624750000/624750000 whether or not the GPU
+            # is pinned, which is why platform.py no longer trusts them for
+            # this. See docs/orin-setup.md.
+            lo = _as_float(_dig(freq_map, "min"))
+            hi = _as_float(_dig(freq_map, "max"))
+            if lo is not None and "freq_min_khz" not in out:
+                out["freq_min_khz"] = lo
+            if hi is not None and "freq_max_khz" not in out:
+                out["freq_max_khz"] = hi
+        # 3d_scaling stays True either way on this board — it does not track
+        # jetson_clocks state, only whether autoscaling is compiled in.
         scaling = _dig(status, "3d_scaling")
         if isinstance(scaling, bool) and "scaling_3d" not in out:
             out["scaling_3d"] = float(scaling)
@@ -365,3 +379,27 @@ def dump_schema() -> Dict[str, Any]:
             }
     except Exception as exc:
         return {"available": False, "reason": f"{type(exc).__name__}: {exc}"}
+
+
+def quick_gpu_state() -> Optional[Dict[str, float]]:
+    """One fast jtop sample of GPU frequency state.
+
+    Used to decide whether jetson_clocks has pinned the GPU. Returns None on
+    any failure — jtop not installed, the daemon not running, the read
+    timing out — so the caller can report "unknown" rather than guessing.
+    That distinction mattered here: this project previously inferred pinning
+    from /sys/class/devfreq, which reads identically whether the GPU is
+    pinned or scaling on this hardware, and the false "pinned" reading
+    suppressed the single most important reproducibility warning.
+    """
+    try:
+        from jtop import jtop as JtopClient
+    except Exception:
+        return None
+    try:
+        with JtopClient(interval=0.2) as board:
+            if not board.ok():
+                return None
+            return extract_gpu(getattr(board, "gpu", None))
+    except Exception:
+        return None
