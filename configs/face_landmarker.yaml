@@ -1,0 +1,30 @@
+# MediaPipe Face Landmarker (478-point mesh).
+run:
+  name: face-mesh-cpu-720p
+  iterations: 300
+  warmup: 30
+  repeat: 1
+
+task:
+  type: face_landmarker
+  model: models/face_landmarker.task
+  delegate: cpu
+  running_mode: image
+  options:
+    num_faces: 1
+    output_face_blendshapes: false
+
+source:
+  type: synthetic
+  width: 1280
+  height: 720
+  count: 30
+
+monitor:
+  power:
+    backend: auto
+    interval_ms: 100
+
+output:
+  dir: results
+  save_raw_latencies: true

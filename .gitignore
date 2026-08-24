@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+
+# Downloaded model bundles (.task / .tflite) — fetched via scripts/fetch_models.sh
+models/*
+!models/.gitkeep
+
+# Benchmark output
+results/*
+!results/.gitkeep
+
+.DS_Store

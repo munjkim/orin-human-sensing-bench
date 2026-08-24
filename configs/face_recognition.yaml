@@ -1,0 +1,39 @@
+# Face recognition as a pipeline: detect -> crop -> embed.
+#
+# MediaPipe has no single face-recognition task, so identity is measured as
+# the pipeline you would actually ship. The per-stage breakdown in the output
+# is the point: it tells you whether detection or embedding dominates, and
+# how that flips as the face count rises.
+run:
+  name: face-recog-cpu-720p
+  iterations: 200
+  warmup: 20
+  repeat: 1
+
+task:
+  type: face_recognition
+  model: models/blaze_face_short_range.tflite   # detector stage
+  delegate: cpu
+  running_mode: image
+  options:
+    embedder_model: models/mobilenet_v3_small_embedder.tflite
+    max_faces: 4
+    crop_margin: 0.2
+    l2_normalize: true
+
+source:
+  # Use a clip with real faces — on synthetic frames the embed stage never
+  # runs and the pipeline looks free.
+  type: synthetic
+  width: 1280
+  height: 720
+  count: 30
+
+monitor:
+  power:
+    backend: auto
+    interval_ms: 100
+
+output:
+  dir: results
+  save_raw_latencies: true
